@@ -1,6 +1,6 @@
 import React from "react";
 
-const App = () => {
+const App = (): JSX.Element => {
   return (
     <div>
       <img src="/logo512.png" alt="Logo" width="200" />
@@ -8,5 +8,7 @@ const App = () => {
     </div>
   );
 };
+
+App.whyDidYouRender = true;
 
 export default App;
