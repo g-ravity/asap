@@ -44,32 +44,16 @@
 button {
   background: none;
   border: none;
+  cursor: pointer;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
 }
 
 button:focus,
 a:focus {
   outline: 0;
 }
-
-/*
-
-Suggested Color Scheme
-
-$primary: #0c44feff;
-$secondary-light: #82dae7ff;
-$secondary-dark: #3aafaeff;
-$error: #fddae0ff;
-$success: #76fcbeff;
-$grey1: #f1f5fd;
-$grey2: #e9ebfb;
-$grey3: #b7b9ca;
-$background: #ffffff;
-$text: #313131;
-$text-secondary: #5b5b62;
-
-*/
