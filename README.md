@@ -5,13 +5,33 @@
 ## Getting Started
 
 - Clone the repo
-- Run the following command, to install all the dependencies
+- For Client:-
+ - Run the following command, to install all the dependencies
   ```
   yarn
+  yarn add commitizen -g
   ```
-- To start the project, run the following command
+ - To start the project, run the following command
   ```
   yarn start
+  ```
+- For Server:-
+ - Run the following command, to install all the dependencies
+  ```
+  yarn
+  yarn add nodemon -g
+  ```
+ - To generate a private key file for your service account:
+
+		In the Firebase console, open Settings > Service Accounts.
+		Click Generate New Private Key, then confirm by clicking Generate Key.
+		Securely store the JSON file containing the key.
+
+ - Rename the json file to serviceAccountKey.json and move it to /server/src/
+
+ - To start the server in development mode
+  ```
+  yarn start:dev
   ```
 
 ## Contributing
