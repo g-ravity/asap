@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { FunctionComponent } from "react";
+import React from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
@@ -11,7 +11,7 @@ import colors from "../theme/colors";
 /**
  * Component
  */
-const NotFound: FunctionComponent<{}> = () => {
+const NotFound: React.FC = () => {
   return (
     <>
       <Helmet>

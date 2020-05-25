@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import AppButton, { ButtonProps as AppButtonProps } from "react-bootstrap/Button";
 
 /**
@@ -17,7 +17,7 @@ export interface ButtonProps extends AppButtonProps {
 /**
  * Component
  */
-export const Button: FunctionComponent<ButtonProps> = props => {
+export const Button: React.FC<ButtonProps> = props => {
   const { title, onClick, className, bgColor, color, width, height, ...restProps } = props;
 
   return (

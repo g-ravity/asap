@@ -1,11 +1,11 @@
-import React, { Fragment, FunctionComponent } from "react";
+import React, { Fragment } from "react";
 import FormControl, { FormControlProps } from "react-bootstrap/FormControl";
 import { FieldProps } from "formik";
 import styled from "@emotion/styled";
 
 export interface InputProps extends FormControlProps, Partial<FieldProps> {}
 
-export const Input: FunctionComponent<InputProps> = props => {
+export const Input: React.FC<InputProps> = props => {
   const { field, form, meta, ...restProps } = props;
   let error: any;
 

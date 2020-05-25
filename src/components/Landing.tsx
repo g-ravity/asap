@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from "react";
+import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Col from "react-bootstrap/Col";
@@ -12,7 +12,7 @@ import { Button } from "./widgets";
 /**
  * Component
  */
-const Landing: FunctionComponent<{}> = () => {
+const Landing: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   return (
