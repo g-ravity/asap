@@ -13,7 +13,7 @@ export const Input: React.FC<InputProps> = props => {
     type: "text",
     ...restProps
   };
-  console.log(field);
+
   if (form && field) {
     formControlProps.value = field?.value;
     formControlProps.onChange = field?.onChange;
@@ -23,7 +23,7 @@ export const Input: React.FC<InputProps> = props => {
   return (
     <Fragment>
       <InputComponent {...formControlProps} />
-      {error ? <Error>{error}</Error> : null}
+      <Error>{error}</Error>
     </Fragment>
   );
 };
