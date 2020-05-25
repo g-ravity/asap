@@ -59,7 +59,7 @@ const FormContainer = styled(Form)<{ isSignUp?: boolean }>`
   left: 0;
   height: 100%;
   width: 50%;
-  opacity: ${props => props.isSignUp ? };
+  opacity: ${props => (props.isSignUp ? 0 : 1)};
   z-index: 1;
   transition: all 0.6s ease-in-out;
 `;
