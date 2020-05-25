@@ -1,11 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, FunctionComponent } from "react";
 import FormControl, { FormControlProps } from "react-bootstrap/FormControl";
 import { FieldProps } from "formik";
 import styled from "@emotion/styled";
 
 export interface InputProps extends FormControlProps, Partial<FieldProps> {}
 
-export function Input(props: InputProps) {
+export const Input: FunctionComponent<InputProps> = props => {
   const { field, form, meta, ...restProps } = props;
   let error: any;
 
@@ -13,7 +13,7 @@ export function Input(props: InputProps) {
     type: "text",
     ...restProps
   };
-
+  console.log(field);
   if (form && field) {
     formControlProps.value = field?.value;
     formControlProps.onChange = field?.onChange;
@@ -22,15 +22,24 @@ export function Input(props: InputProps) {
 
   return (
     <Fragment>
-      <FormControl {...formControlProps} />
+      <InputComponent {...formControlProps} />
       {error ? <Error>{error}</Error> : null}
     </Fragment>
   );
-}
+};
+
+Input.whyDidYouRender = true;
 
 /**
  * Styled Components...
  */
+
+const InputComponent = styled(FormControl)`
+  margin: 10px;
+  :focus {
+    outline: none;
+  }
+`;
 
 const Error = styled.span`
   color: red;

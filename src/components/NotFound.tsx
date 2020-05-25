@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { FunctionComponent } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
@@ -11,7 +11,7 @@ import colors from "../theme/colors";
 /**
  * Component
  */
-const NotFound = (): JSX.Element => {
+const NotFound: FunctionComponent<{}> = () => {
   return (
     <>
       <Helmet>
@@ -28,7 +28,7 @@ const NotFound = (): JSX.Element => {
                 <Link to="/" style={{ color: colors.primary }}>
                   home
                 </Link>
-                ?{" "}
+                ?
               </h1>
             </Col>
             <Col sm={12} md={6} className="text-center">
