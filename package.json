@@ -5,6 +5,7 @@
   "description": "Task Manager & To-Do List - all in one place!",
   "scripts": {
     "start": "react-scripts start",
+    "start-server": "cd server && yarn start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -12,7 +13,8 @@
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "release": "standard-version -- --release-as major",
     "minor-release": "standard-version -- --release-as minor",
-    "patch-release": "standard-version -- --release-as patch"
+    "patch-release": "standard-version -- --release-as patch",
+    "server-install": "cd server && yarn"
   },
   "eslintConfig": {
     "extends": "react-app"
