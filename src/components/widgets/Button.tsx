@@ -25,14 +25,14 @@ export const Button = (props: ButtonProps): JSX.Element => {
     <button
       type="button"
       onClick={onClick}
-      className={className}
+      className={`${className} p-md-2`}
       style={{
         ...style,
         backgroundColor: bgColor,
         color,
         width,
         height,
-        padding: "10px",
+        padding: "5px",
         borderRadius: "5px",
         boxShadow: bgColor && "0px 0px 10px rgba(0,0,0,0.2)"
       }}
@@ -41,3 +41,5 @@ export const Button = (props: ButtonProps): JSX.Element => {
     </button>
   );
 };
+
+Button.whyDidYouRender = true;
