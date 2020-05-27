@@ -6,7 +6,6 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "reset": "rm -rf node_modules && rm yarn.lock && yarn",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
@@ -33,6 +32,7 @@
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "bootstrap": "^4.5.0",
+    "date-fns": "^2.14.0",
     "formik": "^2.1.4",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
@@ -63,6 +63,10 @@
   },
   "lint-staged": {
     "*.{ts, tsx, js, jsx, json, md}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "src/*.{js, jsx, ts, tsx, json}": [
       "prettier --write",
       "eslint --fix"
     ],
