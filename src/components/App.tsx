@@ -32,7 +32,7 @@ const App = (): JSX.Element => {
 
   return (
     <Router>
-      <React.Suspense fallback={Loader}>
+      <React.Suspense fallback={<Loader />}>
         <Switch>
           {pages.map(page => (
             <Route exact path={page.link} component={page.view} key={page.link} />

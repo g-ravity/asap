@@ -32,7 +32,7 @@ const NotFound = (): JSX.Element => {
               </h1>
             </Col>
             <Col sm={12} md={6} className="text-center">
-              <StyledImage src={require("../images/404.png")} width="600" alt="UFO abducting a laptop" fluid />
+              <StyledImage src="/images/404.png" width="600" alt="UFO abducting a laptop" fluid />
             </Col>
           </Row>
         </Container>
@@ -45,12 +45,12 @@ const NotFound = (): JSX.Element => {
  * Styled Components
  */
 const StyledImage = styled(Image)`
-  @media only screen and (max-width: 576px) {
-    width: 300px;
-  }
+  width: 300px;
+
   @media only screen and (min-width: 576px) {
     width: 400px;
   }
+
   @media only screen and (min-width: 1024px) {
     width: 600px;
   }

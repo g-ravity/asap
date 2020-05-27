@@ -22,7 +22,7 @@ const Landing = (): JSX.Element => {
       <Container className="d-flex flex-column align-items-center justify-content-between vh-100">
         <Row className="align-items-center w-100 px-md-5 px-3 py-2 py-md-0">
           <Col xs={4} className="p-0">
-            <Logo src={require("../images/logo.png")} alt="Asap Logo" fluid />
+            <Logo src="/images/logo.png" alt="Asap Logo" fluid />
           </Col>
           <Col xs={8} className="p-0">
             <div className="d-flex justify-content-end">
@@ -52,7 +52,7 @@ const Landing = (): JSX.Element => {
           />
         </Row>
 
-        <Image src={require("../images/landing.png")} width="600" alt="A man drinking coffee & working" fluid />
+        <Image src="/images/landing.png" width="600" alt="A man drinking coffee & working" fluid />
       </Container>
     </>
   );
@@ -62,12 +62,12 @@ const Landing = (): JSX.Element => {
  * Styled Components
  */
 const Logo = styled(Image)`
-  @media only screen and (max-width: 576px) {
-    width: 50px;
-  }
+  width: 50px;
+
   @media only screen and (min-width: 576px) {
     width: 70px;
   }
+
   @media only screen and (min-width: 768px) {
     width: 100px;
   }
