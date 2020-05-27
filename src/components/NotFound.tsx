@@ -32,7 +32,7 @@ const NotFound: React.FC = () => {
               </h1>
             </Col>
             <Col sm={12} md={6} className="text-center">
-              <StyledImage src="/images/404.png" width="600" alt="UFO abducting a laptop" fluid />
+              <StyledImage src="/assets/images/404.png" width="600" alt="UFO abducting a laptop" fluid />
             </Col>
           </Row>
         </Container>

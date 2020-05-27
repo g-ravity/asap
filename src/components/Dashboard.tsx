@@ -52,7 +52,7 @@ const Dashboard = (): JSX.Element => {
         <Row className="h-100">
           <Sidebar xs={12} lg={2} className="d-lg-flex flex-lg-column pb-2 pb-md-3 pb-lg-0">
             <Row className="align-items-center">
-              <Logo src="/images/logo.png" alt="Asap Logo" fluid />
+              <Logo src="/assets/images/logo.png" alt="Asap Logo" fluid />
               <h4 className="m-0 d-none d-lg-block" style={{ color: colors.secondary.light }}>
                 Asap
               </h4>
@@ -118,7 +118,13 @@ const Dashboard = (): JSX.Element => {
               </>
             ) : (
               <Center>
-                <Image src="/images/koala-sleep.png" width="300" alt="A cute sleeping koala" fluid className="mb-3" />
+                <Image
+                  src="/assets/images/koala-sleep.png"
+                  width="300"
+                  alt="A cute sleeping koala"
+                  fluid
+                  className="mb-3"
+                />
                 <h1 style={{ color: colors.grey.tertiary }} className="display-4">
                   Ssh! It&apos;s so quiet here.{" "}
                 </h1>

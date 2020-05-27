@@ -16,34 +16,34 @@
 /* Fonts */
 @font-face {
   font-family: JosefinSans;
-  src: url("/fonts/JosefinSans-Light.ttf");
+  src: url("/assets/fonts/JosefinSans-Light.ttf");
   font-weight: 300;
 }
 @font-face {
   font-family: JosefinSans;
-  src: url("/fonts/JosefinSans-Regular.ttf");
+  src: url("/assets/fonts/JosefinSans-Regular.ttf");
   font-weight: 400;
 }
 @font-face {
   font-family: JosefinSans;
-  src: url("/fonts/JosefinSans-Bold.ttf");
+  src: url("/assets/fonts/JosefinSans-Bold.ttf");
   font-weight: 700;
 }
 @font-face {
   font-family: JosefinSans;
-  src: url("/fonts/JosefinSans-LightItalic.ttf");
+  src: url("/assets/fonts/JosefinSans-LightItalic.ttf");
   font-weight: 300;
   font-style: italic;
 }
 @font-face {
   font-family: JosefinSans;
-  src: url("/fonts/JosefinSans-Italic.ttf");
+  src: url("/assets/fonts/JosefinSans-Italic.ttf");
   font-weight: 400;
   font-style: italic;
 }
 @font-face {
   font-family: JosefinSans;
-  src: url("/fonts/JosefinSans-BoldItalic.ttf");
+  src: url("/assets/fonts/JosefinSans-BoldItalic.ttf");
   font-weight: 700;
   font-style: italic;
 }

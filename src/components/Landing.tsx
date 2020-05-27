@@ -1,12 +1,12 @@
+import styled from "@emotion/styled";
 import React, { useState } from "react";
+import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
-import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
-import styled from "@emotion/styled";
-import AuthModal, { AuthModalState } from "./auth/AuthModal";
 import colors from "../theme/colors";
+import AuthModal, { AuthModalState } from "./auth/AuthModal";
 import { Button } from "./widgets";
 
 /**
@@ -25,7 +25,7 @@ const Landing: React.FC = () => {
       <Container className="d-flex flex-column align-items-center justify-content-between vh-100">
         <Row className="align-items-center w-100 px-md-5 px-3 py-2 py-md-0">
           <Col xs={4} className="p-0">
-            <Logo src="/images/logo.png" alt="Asap Logo" fluid />
+            <Logo src="/assets/images/logo.png" alt="Asap Logo" fluid />
           </Col>
           <Col xs={8} className="p-0">
             <div className="d-flex justify-content-end">
@@ -55,7 +55,7 @@ const Landing: React.FC = () => {
           />
         </Row>
 
-        <Image src="/images/landing.png" width="600" alt="A man drinking coffee & working" fluid />
+        <Image src="/assets/images/landing.png" width="600" alt="A man drinking coffee & working" fluid />
         <AuthModal
           centered
           show={!!authModalState}
