@@ -1,7 +1,9 @@
 import React from "react";
+import * as Yup from "yup";
 import { Formik, Form, FormikHelpers, Field } from "formik";
 import { Input, Button } from "../widgets";
 import styled from "@emotion/styled";
+import colors from "../../theme/colors";
 
 interface AuthFormProps {
   isSignUp?: boolean;
@@ -12,39 +14,47 @@ const AuthForm: React.FC<AuthFormProps> = props => {
   const { isSignUp, onSubmit } = props;
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      render={formikprops => {
-        return (
-          <FormContainer isSignUp={isSignUp} className={isSignUp ? "sign-up-container" : "sign-in-container"}>
-            <h1>{isSignUp ? "Create Account" : "Sign In"}</h1>
-            <div className="my-2 mx-0">
-              <OAuthButton href="/api/auth/google">
-                <i className="fab fa-google-plus-g"></i>
-              </OAuthButton>
-              <OAuthButton href="/api/auth/facebook">
-                <i className="fab fa-facebook-f"></i>
-              </OAuthButton>
-            </div>
-            <span className="my-2">{isSignUp ? "or use your email for registration" : "or use your account"}</span>
-            <Field name="name" placeholder="Name" component={Input} />
-            <Field name="email" placeholder="Email" component={Input} />
-            <Field name="password" type="password" placeholder="Password" component={Input} />
-            <Button className="my-3" title={isSignUp ? "Sign Up" : "Sign In"} />
-          </FormContainer>
-        );
-      }}
-    />
+    <Formik initialValues={initialValues} validationSchema={isSignUp ? SignUpSchema : SignInSchema} onSubmit={onSubmit}>
+      <FormContainer isSignUp={isSignUp} className={isSignUp ? "sign-up-container" : "sign-in-container"}>
+        <h1>{isSignUp ? "Create Account" : "Sign In"}</h1>
+        <div className="my-2 mx-0">
+          <OAuthButton href="/api/auth/google">
+            <i className="fab fa-google-plus-g"></i>
+          </OAuthButton>
+          <OAuthButton href="/api/auth/facebook">
+            <i className="fab fa-facebook-f"></i>
+          </OAuthButton>
+        </div>
+        <span className="my-2">{isSignUp ? "or use your email for registration" : "or use your account"}</span>
+        {isSignUp ? <Field name="name" placeholder="Name" component={Input} /> : null}
+        <Field name="email" placeholder="Email" component={Input} />
+        <Field name="password" type="password" placeholder="Password" component={Input} />
+        <Button className="my-3" title={isSignUp ? "Sign Up" : "Sign In"} type="submit" bgColor={colors.primary} />
+      </FormContainer>
+    </Formik>
   );
 };
+
+/**
+ * Helper Variables...
+ */
 
 const initialValues = {
   name: "",
   email: "",
-  password: "",
-  cPassword: ""
+  password: ""
 };
+
+const SignInSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid Email!").required("Required"),
+  password: Yup.string().min(8, "Invalid Password!").max(255, "Invalid Password!").required("Required")
+});
+
+const SignUpSchema = Yup.object().shape({
+  name: Yup.string().min(3, "Too Short!").max(50, "Too Long!").required("Required"),
+  email: Yup.string().email("Invalid Email!").required("Required"),
+  password: Yup.string().min(8, "Too Short!").max(255, "Too Long!").required("Required")
+});
 
 export type InitialAuthValues = typeof initialValues;
 
@@ -52,7 +62,7 @@ export type InitialAuthValues = typeof initialValues;
  * Styled components...
  */
 
-const FormContainer = styled(Form)<{ isSignUp?: boolean }>`
+const FormContainer = styled(({ isSignUp, ...props }) => <Form {...props} />)<{ isSignUp?: boolean }>`
   top: 0;
   left: 0;
   opacity: ${props => (props.isSignUp ? 0 : 1)};

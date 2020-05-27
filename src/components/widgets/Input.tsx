@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import FormControl, { FormControlProps } from "react-bootstrap/FormControl";
 import { FieldProps } from "formik";
 import styled from "@emotion/styled";
@@ -16,31 +16,40 @@ export const Input: React.FC<InputProps> = props => {
 
   if (form && field) {
     formControlProps.value = field?.value;
-    formControlProps.onChange = field?.onChange;
+    formControlProps.onChange = e => form.handleChange(field.name)(e.target.value);
+    // formControlProps.onChange = e => field.onChange(e.target.value);
     error = form.touched[field.name] && form.errors && form.errors[field.name];
   }
 
   return (
-    <Fragment>
-      <InputComponent {...formControlProps} />
+    <Container error={error}>
+      <FormControl autoComplete="off" {...formControlProps} />
       <Error>{error}</Error>
-    </Fragment>
+    </Container>
   );
 };
-
-Input.whyDidYouRender = true;
 
 /**
  * Styled Components...
  */
 
-const InputComponent = styled(FormControl)`
-  margin: 10px;
-  :focus {
-    outline: none;
+const Container = styled.div<{ error: string }>`
+  margin-top: 10px;
+  width: 100%;
+  input {
+    border: ${props => props.error && "1px solid red"};
+    :focus {
+      box-shadow: none;
+      border: ${props => (props.error ? "1px solid red" : "1px solid #ced4da")};
+    }
   }
 `;
 
-const Error = styled.span`
+const Error = styled.div`
   color: red;
+  width: 100%;
+  height: 19px;
+  text-align: left;
+  margin: 5px 0 0 10px;
+  font-size: 0.8rem;
 `;

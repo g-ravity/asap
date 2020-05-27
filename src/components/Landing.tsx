@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
 import styled from "@emotion/styled";
-import AuthModal from "./auth/AuthModal";
+import AuthModal, { AuthModalState } from "./auth/AuthModal";
 import colors from "../theme/colors";
 import { Button } from "./widgets";
 
@@ -13,7 +13,7 @@ import { Button } from "./widgets";
  * Component
  */
 const Landing: React.FC = () => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalState, setAuthModalState] = useState<AuthModalState>(null);
 
   return (
     <>
@@ -29,10 +29,10 @@ const Landing: React.FC = () => {
           </Col>
           <Col xs={8} className="p-0">
             <div className="d-flex justify-content-end">
-              <Button title="Sign In" variant="light" onClick={() => console.log("Signed In")} className="mr-2" />
+              <Button title="Sign In" variant="light" onClick={() => setAuthModalState("signIn")} className="mr-2" />
               <Button
                 title="Sign Up"
-                onClick={() => console.log("Signed Up")}
+                onClick={() => setAuthModalState("signUp")}
                 bgColor={colors.secondary.light}
                 color={colors.background}
               />
@@ -48,7 +48,7 @@ const Landing: React.FC = () => {
           </p>
           <Button
             title="Get Started"
-            onClick={() => setIsAuthModalOpen(true)}
+            onClick={() => setAuthModalState("signIn")}
             bgColor={colors.primary}
             color={colors.background}
             className="mt-3"
@@ -56,7 +56,12 @@ const Landing: React.FC = () => {
         </Row>
 
         <Image src={require("../images/landing.png")} width="600" alt="A man drinking coffee & working" fluid />
-        <AuthModal centered show={isAuthModalOpen} onHide={() => setIsAuthModalOpen(false)} />
+        <AuthModal
+          centered
+          show={!!authModalState}
+          onHide={() => setAuthModalState(null)}
+          authModalState={authModalState}
+        />
       </Container>
     </>
   );

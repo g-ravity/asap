@@ -7,8 +7,14 @@ import { FormikHelpers } from "formik";
 import { Button } from "../widgets";
 import "./auth.css";
 
-const AuthModal: React.FC<ModalProps> = props => {
-  const containerRef: any = useRef(null);
+export type AuthModalState = "signUp" | "signIn" | null;
+interface AuthModalProps extends ModalProps {
+  authModalState: AuthModalState;
+}
+
+const AuthModal: React.FC<AuthModalProps> = props => {
+  const { authModalState, ...restProps } = props;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const signInClick = () => {
     containerRef.current?.classList.remove("right-panel-active");
@@ -18,11 +24,13 @@ const AuthModal: React.FC<ModalProps> = props => {
   };
 
   const onSignUp = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => {};
-  const onSignIn = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => {};
+  const onSignIn = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => {
+    console.log(values);
+  };
 
   return (
-    <Modal {...props}>
-      <Container ref={containerRef}>
+    <Modal {...restProps}>
+      <Container ref={containerRef} className={props.authModalState === "signUp" ? "right-panel-active" : ""}>
         <AuthForm onSubmit={onSignIn} />
         <AuthForm onSubmit={onSignUp} isSignUp />
         <OverlayContainer className="overlay-container">
@@ -102,16 +110,8 @@ const Container = styled.div`
   position: relative;
   overflow: hidden;
   max-width: 100%;
-  min-height: 480px;
+  min-height: 540px;
   z-index: 2;
-
-  /* .overlay-left {
-    transform: translateX(-20%);
-  } */
-  .overlay-right {
-    right: 0;
-    transform: translateX(0);
-  }
 `;
 
 AuthModal.whyDidYouRender = true;
