@@ -1,3 +1,19 @@
+/* Colors */
+:root {
+  --primary: #0c44feff;
+  --secondary-light: #82dae7ff;
+  --secondary-dark: #3aafaeff;
+  --error: #fddae0ff;
+  --success: #76fcbeff;
+  --grey-1: #f1f5fd;
+  --grey-2: #e9ebfb;
+  --grey-3: #b7b9ca;
+  --background: #ffffff;
+  --text-primary: #313131;
+  --text-secondary: #5b5b62;
+}
+
+/* Fonts */
 @font-face {
   font-family: JosefinSans;
   src: url("/fonts/JosefinSans-Light.ttf");
@@ -60,4 +76,30 @@ a {
 button:focus,
 a:focus {
   outline: 0;
+}
+
+/* Default Scrollbar Styling */
+@media only screen and (min-width: 992px) {
+  /* width */
+  ::-webkit-scrollbar {
+    width: 3px;
+    margin-right: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--grey-3);
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--text-secondary);
+    border-radius: 10px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-primary);
+  }
 }
