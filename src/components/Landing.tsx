@@ -1,12 +1,12 @@
-import styled from "@emotion/styled";
 import React, { useState } from "react";
-import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
+import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
-import colors from "../theme/colors";
+import styled from "@emotion/styled";
 import AuthModal, { AuthModalState } from "./auth/AuthModal";
+import colors from "../theme/colors";
 import { Button } from "./widgets";
 
 /**

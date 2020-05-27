@@ -1,5 +1,7 @@
 import express from "express";
 import * as admin from "firebase-admin";
+import errorhandler from "errorhandler";
+import * as Sentry from "@sentry/node";
 import * as serviceAccount from "./serviceAccountKey.json";
 
 const app = express();
@@ -20,10 +22,28 @@ admin.initializeApp({
   credential: admin.credential.cert(params),
   databaseURL: "https://asap-9b414.firebaseio.com"
 });
+Sentry.init({
+  dsn: process.env.SENTRY_ENV,
+  attachStacktrace: true,
+  debug: true,
+  release: process.env.RELEASE,
+  environment: "production"
+});
+
+app.use(Sentry.Handlers.requestHandler());
 
 app.get("/", (req, res) => {
+  throw new Error("Something Went Out Of Control");
   res.send("Welcome to this page.");
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(Sentry.Handlers.errorHandler());
+}
+
+if (process.env.NODE_ENV === "development") {
+  app.use(errorhandler());
+}
 
 app.listen(port, () => {
   console.log(`Server is listening on port: ${port}`);
