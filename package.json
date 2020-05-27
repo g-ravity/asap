@@ -5,15 +5,16 @@
   "description": "Task Manager & To-Do List - all in one place!",
   "scripts": {
     "start": "react-scripts start",
-    "start-server": "cd server && yarn start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "reset": "rm -rf node_modules && rm yarn.lock && yarn",
+    "install-all": "yarn && yarn server-install",
+    "start-server": "cd server && yarn start",
+    "server-install": "cd server && yarn",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "release": "standard-version -- --release-as major",
     "minor-release": "standard-version -- --release-as minor",
-    "patch-release": "standard-version -- --release-as patch",
-    "server-install": "cd server && yarn"
+    "patch-release": "standard-version -- --release-as patch"
   },
   "eslintConfig": {
     "extends": "react-app"
