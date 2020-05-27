@@ -9,6 +9,7 @@ node_modules
 coverage
 
 # credentials
+.env
 serviceAccountKey.json
 
 # production
