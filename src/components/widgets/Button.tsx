@@ -1,45 +1,41 @@
-import CSS from "csstype";
 import React from "react";
+import AppButton, { ButtonProps as AppButtonProps } from "react-bootstrap/Button";
 
 /**
  * Types
  */
-export interface ButtonProps {
-  title: string;
-  onClick: () => void;
-  className?: string;
+export interface ButtonProps extends AppButtonProps {
   bgColor?: string;
+  className?: string;
   color?: string;
-  width?: number | string;
   height?: number | string;
-  style?: CSS.Properties;
+  onClick?: any;
+  title: string;
+  width?: number | string;
 }
 
 /**
  * Component
  */
-export const Button = (props: ButtonProps): JSX.Element => {
-  const { title, onClick, className, style, bgColor, color, width, height } = props;
+export const Button: React.FC<ButtonProps> = props => {
+  const { title, onClick, className, bgColor, color, width, height, ...restProps } = props;
 
   return (
-    <button
+    <AppButton
       type="button"
       onClick={onClick}
       className={`${className} p-md-2`}
       style={{
-        ...style,
         backgroundColor: bgColor,
+        border: bgColor,
         color,
         width,
         height,
-        padding: "5px",
-        borderRadius: "5px",
         boxShadow: bgColor && "0px 0px 10px rgba(0,0,0,0.2)"
       }}
+      {...restProps}
     >
       {title}
-    </button>
+    </AppButton>
   );
 };
-
-Button.whyDidYouRender = true;

@@ -5,13 +5,15 @@
   "description": "Task Manager & To-Do List - all in one place!",
   "scripts": {
     "start": "react-scripts start",
+    "start-server": "cd server && yarn start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "reset": "rm -rf node_modules && rm yarn.lock && yarn",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "release": "standard-version -- --release-as major",
     "minor-release": "standard-version -- --release-as minor",
-    "patch-release": "standard-version -- --release-as patch"
+    "patch-release": "standard-version -- --release-as patch",
+    "server-install": "cd server && yarn"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -31,6 +33,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
+    "@sentry/browser": "^5.15.5",
     "bootstrap": "^4.5.0",
     "date-fns": "^2.14.0",
     "formik": "^2.1.4",
@@ -39,7 +42,8 @@
     "react-dom": "^16.13.1",
     "react-helmet": "^6.0.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "yup": "^0.29.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
@@ -49,6 +53,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-helmet": "^6.0.0",
     "@types/react-router-dom": "^5.1.5",
+    "@types/yup": "^0.29.0",
     "@welldone-software/why-did-you-render": "^4.2.2",
     "cz-conventional-changelog": "^3.2.0",
     "eslint-config-airbnb": "^18.1.0",

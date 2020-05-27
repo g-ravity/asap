@@ -11,7 +11,7 @@ import colors from "../theme/colors";
 /**
  * Component
  */
-const NotFound = (): JSX.Element => {
+const NotFound: React.FC = () => {
   return (
     <>
       <Helmet>
@@ -28,7 +28,7 @@ const NotFound = (): JSX.Element => {
                 <Link to="/" style={{ color: colors.primary }}>
                   home
                 </Link>
-                ?{" "}
+                ?
               </h1>
             </Col>
             <Col sm={12} md={6} className="text-center">

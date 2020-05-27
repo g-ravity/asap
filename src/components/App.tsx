@@ -18,7 +18,7 @@ const NotFound = React.lazy(() => import("./NotFound"));
 /**
  * Component
  */
-const App = (): JSX.Element => {
+const App: React.FC = () => {
   const pages: Page[] = [
     {
       link: "/",
