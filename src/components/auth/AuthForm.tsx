@@ -1,9 +1,9 @@
+import styled from "@emotion/styled";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import React from "react";
 import * as Yup from "yup";
-import { Formik, Form, FormikHelpers, Field } from "formik";
-import { Input, Button } from "../widgets";
-import styled from "@emotion/styled";
 import colors from "../../theme/colors";
+import { Button, Input } from "../widgets";
 
 interface AuthFormProps {
   isSignUp?: boolean;
@@ -19,10 +19,10 @@ const AuthForm: React.FC<AuthFormProps> = props => {
         <h1>{isSignUp ? "Create Account" : "Sign In"}</h1>
         <div className="my-2 mx-0">
           <OAuthButton href="/api/auth/google">
-            <i className="fab fa-google-plus-g"></i>
+            <i className="fab fa-google-plus-g" />
           </OAuthButton>
           <OAuthButton href="/api/auth/facebook">
-            <i className="fab fa-facebook-f"></i>
+            <i className="fab fa-facebook-f" />
           </OAuthButton>
         </div>
         <span className="my-2">{isSignUp ? "or use your email for registration" : "or use your account"}</span>
