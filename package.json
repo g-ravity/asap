@@ -11,7 +11,7 @@
     "install-all": "yarn && yarn server-install",
     "start-server": "cd server && yarn start",
     "server-install": "cd server && yarn",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "lint:fix": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
     "release": "standard-version -- --release-as major",
     "minor-release": "standard-version -- --release-as minor",
     "patch-release": "standard-version -- --release-as patch"
@@ -68,24 +68,10 @@
     "typescript": "^3.9.3"
   },
   "lint-staged": {
-    "*.{ts, tsx, js, jsx, json, md}": [
-      "prettier --write",
-      "eslint --fix"
+    "*.{ts,tsx,js,jsx,json,md}": [
+      "prettier --write"
     ],
-    "src/*.{js, jsx, ts, tsx, json}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "src/**/*.{js, jsx, ts, tsx, json}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "server/src/*.{js, jsx, ts, tsx, json}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "server/src/**/*.{js, jsx, ts, tsx, json}": [
-      "prettier --write",
+    "*.{ts,tsx,js,jsx}": [
       "eslint --fix"
     ]
   },
