@@ -1,13 +1,14 @@
 import React from "react";
 import FormControl, { FormControlProps } from "react-bootstrap/FormControl";
-import { FieldProps } from "formik";
+import { FieldProps, FormikErrors } from "formik";
 import styled from "@emotion/styled";
 
 export interface InputProps extends FormControlProps, Partial<FieldProps> {}
+type Error = string | false | string[] | FormikErrors<any> | FormikErrors<any>[] | undefined;
 
 export const Input: React.FC<InputProps> = props => {
-  const { field, form, meta, ...restProps } = props;
-  let error: any;
+  const { field, form, ...restProps } = props;
+  let error: Error;
 
   const formControlProps: FormControlProps = {
     type: "text",
@@ -16,15 +17,14 @@ export const Input: React.FC<InputProps> = props => {
 
   if (form && field) {
     formControlProps.value = field?.value;
-    formControlProps.onChange = e => form.handleChange(field.name)(e.target.value);
-    // formControlProps.onChange = e => field.onChange(e.target.value);
+    formControlProps.onChange = (e): void => form.handleChange(field.name)(e.target.value);
     error = form.touched[field.name] && form.errors && form.errors[field.name];
   }
 
   return (
     <Container error={error}>
-      <FormControl autoComplete="off" {...formControlProps} />
-      <Error>{error}</Error>
+      <FormControl autoComplete="off" className={error ? "border-danger" : ""} {...formControlProps} />
+      <Error className="text-danger">{error}</Error>
     </Container>
   );
 };
@@ -33,20 +33,17 @@ export const Input: React.FC<InputProps> = props => {
  * Styled Components...
  */
 
-const Container = styled.div<{ error: string }>`
+const Container = styled.div<{ error: Error }>`
   margin-top: 10px;
   width: 100%;
   input {
-    border: ${props => props.error && "1px solid red"};
     :focus {
       box-shadow: none;
-      border: ${props => (props.error ? "1px solid red" : "1px solid #ced4da")};
     }
   }
 `;
 
 const Error = styled.div`
-  color: red;
   width: 100%;
   height: 19px;
   text-align: left;

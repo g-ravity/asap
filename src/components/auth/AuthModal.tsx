@@ -1,11 +1,10 @@
 import React, { useRef } from "react";
-import colors from "../../theme/colors";
 import styled from "@emotion/styled";
 import Modal, { ModalProps } from "react-bootstrap/Modal";
-import AuthForm, { InitialAuthValues } from "./AuthForm";
 import { FormikHelpers } from "formik";
+import AuthForm, { InitialAuthValues } from "./AuthForm";
+import colors from "../../theme/colors";
 import { Button } from "../widgets";
-import "./auth.css";
 
 export type AuthModalState = "signUp" | "signIn" | null;
 interface AuthModalProps extends ModalProps {
@@ -16,20 +15,19 @@ const AuthModal: React.FC<AuthModalProps> = props => {
   const { authModalState, ...restProps } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const signInClick = () => {
-    containerRef.current?.classList.remove("right-panel-active");
-  };
-  const signUpClick = () => {
-    containerRef.current?.classList.add("right-panel-active");
-  };
+  const signInClick = (): void => containerRef.current?.classList.remove("right-panel-active");
 
-  const onSignUp = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => {};
-  const onSignIn = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => {
+  const signUpClick = (): void => containerRef.current?.classList.add("right-panel-active");
+
+  const onSignUp = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>): void => {
+    console.log(values);
+  };
+  const onSignIn = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>): void => {
     console.log(values);
   };
 
   return (
-    <Modal {...restProps}>
+    <StyledModal {...restProps}>
       <Container ref={containerRef} className={props.authModalState === "signUp" ? "right-panel-active" : ""}>
         <AuthForm onSubmit={onSignIn} />
         <AuthForm onSubmit={onSignUp} isSignUp />
@@ -40,7 +38,7 @@ const AuthModal: React.FC<AuthModalProps> = props => {
           </Overlay>
         </OverlayContainer>
       </Container>
-    </Modal>
+    </StyledModal>
   );
 };
 
@@ -112,6 +110,48 @@ const Container = styled.div`
   max-width: 100%;
   min-height: 540px;
   z-index: 2;
+`;
+
+const StyledModal = styled(Modal)`
+  .modal-content {
+    border-radius: 7rem;
+  }
+
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: 40%;
+      margin: 1.75rem auto;
+    }
+  }
+  .overlay-left {
+    transform: translateX(-20%);
+  }
+  .overlay-right {
+    right: 0;
+    transform: translateX(0);
+  }
+  .right-panel-active {
+    .overlay {
+      transform: translateX(50%);
+    }
+    .overlay-container {
+      transform: translateX(-100%);
+    }
+    .overlay-left {
+      transform: translateX(0);
+    }
+    .overlay-right {
+      transform: translateX(20%);
+    }
+    .sign-in-container {
+      transform: translateX(100%);
+    }
+    .sign-up-container {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 5;
+    }
+  }
 `;
 
 AuthModal.whyDidYouRender = true;
