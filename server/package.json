@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Task Manager & To-Do List - all in one place",
   "scripts": {
-    "start": "npm run build && node build/index.js",
+    "start": "npm run build && node build/server/src/index.js",
     "start:dev": "nodemon",
     "reset": "rimraf ./node_modules && rm yarn.lock && yarn",
     "build": "rimraf ./build && tsc"
@@ -26,6 +26,7 @@
   "dependencies": {
     "@sentry/node": "5.15.5",
     "express": "^4.17.1",
-    "firebase-admin": "^8.12.1"
+    "firebase-admin": "^8.12.1",
+    "yup": "^0.29.1"
   }
 }
