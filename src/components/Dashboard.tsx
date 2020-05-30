@@ -7,7 +7,9 @@ import Image from "react-bootstrap/Image";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
 import colors from "../theme/colors";
-import { getDate, getDay, getInitials, getMonth, getRandomColor, getYear } from "../utils";
+import { getDate, getDay, getInitials, getMemoizedColor, getMonth, getYear } from "../utils";
+import FAB from "./FAB";
+import List, { ListType } from "./List";
 import { Button } from "./widgets";
 
 // NOTE: Uncomment this to check the design when the list has some projects
@@ -28,8 +30,33 @@ const projects: string[] = [
 /**
  * Component
  */
-const Dashboard = (): JSX.Element => {
+const Dashboard: React.FC = () => {
   const [date, setDate] = useState(new Date());
+  const [lists, setLists] = useState<ListType[]>([
+    { name: "Features", tasks: ["Authentication Khatam Karna Hain Bey!", "Bahaut Saare Features Baaki Hain"] },
+    {
+      name: "Backend",
+      tasks: [
+        "Anish Bhai, Backend ka kya haal ba?",
+        "Sab Kuch setup karke mujhe samjhao Anish Bhaijaan",
+        "Ab Bas 10 Days bacha hain project submit karne mein!"
+      ]
+    }
+  ]);
+
+  /**
+   * List functions
+   */
+  const addList = (newList: ListType): void => {
+    setLists([...lists, newList]);
+  };
+
+  const deleteList = (listName: string): void => {
+    setLists(lists.filter(list => list.name !== listName));
+  };
+
+  // TODO: Uncomment and implement this after adding id to ListType
+  // const updateList = (listName: string): void => {};
 
   useEffect(() => {
     const dateTimeout = setTimeout(() => {
@@ -72,14 +99,14 @@ const Dashboard = (): JSX.Element => {
 
             <ProjectContainer className="flex-nowrap flex-lg-column px-lg-3">
               {projects.length ? (
-                projects.map(project => {
+                projects.map((project: string) => {
                   return (
                     <Row
                       key={project}
                       className="mx-1 mx-md-2 mx-lg-0 my-lg-3 align-items-center justify-content-center justify-content-lg-start"
                     >
                       <Col xs={12} lg="auto" className="p-0 d-flex justify-content-center mb-1">
-                        <ProjectLogo bgColor={getRandomColor()} className="mr-lg-3">
+                        <ProjectLogo bgColor={getMemoizedColor(project)} className="mr-lg-3">
                           {getInitials(project)}
                         </ProjectLogo>
                       </Col>
@@ -95,7 +122,7 @@ const Dashboard = (): JSX.Element => {
             </ProjectContainer>
           </Sidebar>
 
-          <MainArea xs={12} lg={10} className="p-3 position-relative h-100">
+          <MainArea xs={12} lg={10} className="p-3 position-relative h-100 overflow-hidden">
             <h2>Dashboard</h2>
             <p>
               <span className="font-weight-bold" style={{ color: colors.primary }}>
@@ -106,13 +133,12 @@ const Dashboard = (): JSX.Element => {
             {projects.length ? (
               <>
                 <h4 className="my-3">{projects[0].toUpperCase()}</h4>
-                <Col>
+                <Col style={{ overflowX: "auto" }}>
                   {/* TODO: Replace these divs with List & Task components */}
-                  <Row>
-                    <div style={{ width: "100px", height: "300px", backgroundColor: "white", marginRight: "10px" }}>
-                      List 1
-                    </div>
-                    <div style={{ width: "100px", height: "200px", backgroundColor: "white" }}>List 2</div>
+                  <Row className="align-items-start flex-nowrap">
+                    {lists.map(list => (
+                      <List key={list.name} {...list} deleteList={deleteList} />
+                    ))}
                   </Row>
                 </Col>
               </>
@@ -133,6 +159,8 @@ const Dashboard = (): JSX.Element => {
                 </p>
               </Center>
             )}
+
+            <FAB addList={addList} />
           </MainArea>
         </Row>
       </Container>
@@ -174,8 +202,8 @@ const ProjectContainer = styled(Row)`
   }
 `;
 
-const ProjectLogo = styled.div`
-  background-color: ${(props: { bgColor: string }): string => props.bgColor};
+const ProjectLogo = styled.div<{ bgColor: string }>`
+  background-color: ${(props): string => props.bgColor};
   text-align: center;
   font-weight: 700;
   color: ${colors.background};
