@@ -1,22 +1,30 @@
 export interface Id {
   id: string;
 }
-export interface Project {
+
+export interface CreateInfo {
+  createdBy: UserIdWithName;
+  createdAt: Date;
+}
+
+export interface UpdateInfo {
+  updatedBy: UserIdWithName;
+  updatedAt: Date;
+}
+
+export interface Project extends CreateInfo, UpdateInfo {
   name: string;
   listIds: string[] | null;
   memberIds: string[];
-  createdBy: UserIdWithName;
-  modifiedBy: UserIdWithName;
-  createdAt: Date;
 }
-export interface User {
+export interface User extends Pick<CreateInfo, "createdAt"> {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   displayImage?: string;
   facebookId?: string;
   googleId?: string;
   projectIds: Array<string>;
 }
 
-type UserIdWithName = Pick<User & Id, "id" | "name">;
+export type UserIdWithName = Pick<User & Id, "id" | "name">;

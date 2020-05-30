@@ -52,7 +52,7 @@ app.listen(keys.port, () => console.log(`Server is listening on port: ${keys.por
 app.post("/api/signUp", authControllers.signUp);
 app.post("/api/signIn", authControllers.signIn);
 app.get("/api/signOut", authControllers.signOut);
-app.get("/api/google", authControllers.googleOAuth);
-app.get("/api/google/callback", authControllers.googleOAuthCallback);
-app.get("/api/facebook", authControllers.facebookOAuth);
-app.get("/api/facebook/callback", authControllers.facebookOAuthCallback);
+app.get("/api/auth/google", authControllers.googleOAuth);
+app.get("/api/auth/google/callback", authControllers.googleOAuthCallback);
+app.get("/api/auth/facebook", authControllers.facebookOAuth);
+app.get("/api/auth/facebook/callback", authControllers.facebookOAuthCallback);

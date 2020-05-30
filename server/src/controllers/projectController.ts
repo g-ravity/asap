@@ -13,7 +13,7 @@ type AddProjectReq = Request<
   }
 >;
 
-const projectSchema = Yup.object().shape({
+const ProjectSchema = Yup.object().shape({
   name: Yup.string().min(3, "Too short!").required("Required!"),
   listIds: Yup.array().of(Yup.string()).nullable().required("Required!"),
   memberIds: Yup.array().of(Yup.string()).nullable().required("Required!"),
