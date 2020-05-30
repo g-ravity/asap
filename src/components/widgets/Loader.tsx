@@ -13,16 +13,16 @@ export interface LoaderProps {
 /**
  * Component
  */
-export const Loader = (props: LoaderProps): JSX.Element => {
+export const Loader: React.FC<LoaderProps> = props => {
   return <LoaderDiv {...props} />;
 };
 
 /**
  * Styled Components
  */
-const LoaderDiv = styled.div`
-  color: ${(props: LoaderProps): string => props.color ?? colors.secondary.light};
-  font-size: ${(props: LoaderProps): string => props.size ?? "10px"};
+const LoaderDiv = styled.div<LoaderProps>`
+  color: ${(props): string => props.color ?? colors.secondary.light};
+  font-size: ${(props): string => props.size ?? "10px"};
   margin: 100px auto;
   width: 1em;
   height: 1em;
