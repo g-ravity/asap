@@ -1,16 +1,22 @@
-import React, { useRef } from "react";
 import styled from "@emotion/styled";
-import Modal, { ModalProps } from "react-bootstrap/Modal";
 import { FormikHelpers } from "formik";
-import AuthForm, { InitialAuthValues } from "./AuthForm";
+import React, { useRef } from "react";
+import Modal, { ModalProps } from "react-bootstrap/Modal";
 import colors from "../../theme/colors";
 import { Button } from "../widgets";
+import AuthForm, { InitialAuthValues } from "./AuthForm";
 
+/**
+ * Types
+ */
 export type AuthModalState = "signUp" | "signIn" | null;
 interface AuthModalProps extends ModalProps {
   authModalState: AuthModalState;
 }
 
+/**
+ * Components
+ */
 const AuthModal: React.FC<AuthModalProps> = props => {
   const { authModalState, ...restProps } = props;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -28,7 +34,7 @@ const AuthModal: React.FC<AuthModalProps> = props => {
 
   return (
     <StyledModal {...restProps}>
-      <Container ref={containerRef} className={props.authModalState === "signUp" ? "right-panel-active" : ""}>
+      <Container ref={containerRef} className={authModalState === "signUp" ? "right-panel-active" : ""}>
         <AuthForm onSubmit={onSignIn} />
         <AuthForm onSubmit={onSignUp} isSignUp />
         <OverlayContainer className="overlay-container">
@@ -58,9 +64,8 @@ const OverlayComponent: React.FC<{ isSignUp?: boolean; onBtnClick: () => void }>
 };
 
 /**
- * Styled Components...
+ * Styled Components
  */
-
 const OverlayContainer = styled.div`
   position: absolute;
   top: 0;
