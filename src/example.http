@@ -1,0 +1,43 @@
+GET http://localhost:8080/
+
+###
+
+POST http://localhost:8080/api/signIn
+content-type: application/json
+
+{
+    "email": "iampebb@gmail.com",
+    "password": "12345678"
+}
+
+###
+
+GET http://localhost:8080/api/signOut
+
+###
+
+POST http://localhost:8080/api/projects
+content-type: application/json
+
+{
+  "project": {
+    "name": "Project-1"
+  }
+}
+ 
+###
+
+PUT http://localhost:8080/api/projects/ZkKFeCq2IANnGJXL06wL
+content-type: application/json
+
+{
+  "project": {
+    "name": "firstProject",
+    "listIds": ["1"], 
+    "memberIds": []
+  }
+}
+
+###
+
+DELETE  http://localhost:8080/api/projects/xOQlWdISXztYNYJluhWB
