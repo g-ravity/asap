@@ -83,5 +83,13 @@
     "react": {
       "version": "detect"
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["server/src/*.ts", "server/src/**/*.ts", "server/src/**/**/*.ts"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
 }

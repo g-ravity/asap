@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/node";
 import errorhandler from "errorhandler";
 import session from "cookie-session";
 import passport from "passport";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import "./config/firebase";
 import keys from "./config/keys";
 import "./controllers/authControllers/passport";
@@ -38,6 +38,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// AUTH MIDDLEWARE
+const verifyAuth = (req: Request, res: Response, next: NextFunction): void => {
+  if (req.user) {
+    next();
+  } else {
+    res.status(401).send("Not Authorized!");
+  }
+};
+
 // BODYPARSER
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -57,3 +66,5 @@ app.get("/api/auth/google", authControllers.googleOAuth);
 app.get("/api/auth/google/callback", authControllers.googleOAuthCallback);
 app.get("/api/auth/facebook", authControllers.facebookOAuth);
 app.get("/api/auth/facebook/callback", authControllers.facebookOAuthCallback);
+
+app.get("/", verifyAuth, (req, res) => res.send("Working !! "));

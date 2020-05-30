@@ -15,6 +15,7 @@ export default async (params: Omit<User, "projectIds" | "createdAt">): Promise<U
       projectIds: [],
       createdAt: new Date()
     };
+    console.log(user);
 
     if (password) {
       const salt = await bcrypt.genSalt(10);
