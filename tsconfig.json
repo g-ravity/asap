@@ -22,6 +22,6 @@
     "allowJs": true,
     "strict": true
   },
-  "exclude": ["node_modules", "build", "scripts"],
+  "exclude": ["node_modules", "build", "scripts", "server"],
   "include": ["src"]
 }

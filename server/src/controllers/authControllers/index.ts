@@ -37,8 +37,6 @@ type SignInReq = Request<{}, null, Pick<User, "email" | "password">>;
 type SignInRes = Response<{}>;
 
 export const signIn = async (req: SignInReq, res: SignInRes, next: NextFunction): Promise<SignInRes> => {
-  await SignUpSchema.validate(req.body);
-
   return passport.authenticate("local", (error, user) => {
     if (error) return res.status(400).send({ message: "Wrong email or password!" });
     if (!user) return res.status(400).send({ message: "Wrong email or password!" });
