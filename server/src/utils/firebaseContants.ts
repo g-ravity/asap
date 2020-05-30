@@ -5,3 +5,11 @@ export const getProjectDBRef = (): string => {
 export const getProjectDocRef = (projectId: string): string => {
   return `projects/${projectId}`;
 };
+
+export const getUserDBRef = (): string => {
+  return `users`;
+};
+
+export const getUserDocRef = (userId: string): string => {
+  return `users/${userId}`;
+};

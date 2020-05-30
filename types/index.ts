@@ -1,3 +1,6 @@
+export interface Id {
+  id: string;
+}
 export interface Project {
   name: string;
   listIds: string[] | null;
@@ -6,8 +9,14 @@ export interface Project {
   modifiedBy: UserIdWithName;
   createdAt: Date;
 }
-
-export interface UserIdWithName {
+export interface User {
   name: string;
-  id: string;
+  email: string;
+  password: string;
+  displayImage?: string;
+  facebookId?: string;
+  googleId?: string;
+  projectIds: Array<string>;
 }
+
+type UserIdWithName = Pick<User & Id, "id" | "name">;

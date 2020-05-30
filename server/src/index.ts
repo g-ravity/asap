@@ -1,32 +1,14 @@
-import * as admin from "firebase-admin";
-import errorhandler from "errorhandler";
 import * as Sentry from "@sentry/node";
+import errorhandler from "errorhandler";
 import session from "cookie-session";
 import passport from "passport";
 import express from "express";
-import keys from "./utils/keys";
-import * as serviceAccount from "./serviceAccountKey.json";
+import "./config/firebase";
+import keys from "./config/keys";
+import * as authControllers from "./controllers/authControllers";
 
 const app = express();
 app.enable("trust proxy");
-
-const params = {
-  type: serviceAccount.type,
-  projectId: serviceAccount.project_id,
-  privateKeyId: serviceAccount.private_key_id,
-  privateKey: serviceAccount.private_key,
-  clientEmail: serviceAccount.client_email,
-  clientId: serviceAccount.client_id,
-  authUri: serviceAccount.auth_uri,
-  tokenUri: serviceAccount.token_uri,
-  authProviderX509CertUrl: serviceAccount.auth_provider_x509_cert_url,
-  clientC509CertUrl: serviceAccount.client_x509_cert_url
-};
-
-admin.initializeApp({
-  credential: admin.credential.cert(params),
-  databaseURL: "https://asap-9b414.firebaseio.com"
-});
 
 // ERROR HANDLER
 if (keys.nodeEnv === "development") {
@@ -59,6 +41,18 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.listen(keys.port, () => {
-  console.log(`Server is listening on port: ${keys.port}`);
-});
+/* eslint-disable-next-line no-console */
+app.listen(keys.port, () => console.log(`Server is listening on port: ${keys.port}`));
+
+/**
+ * ROUTES...
+ */
+
+/* User Routes */
+app.post("/api/signUp", authControllers.signUp);
+app.post("/api/signIn", authControllers.signIn);
+app.get("/api/signOut", authControllers.signOut);
+app.get("/api/google", authControllers.googleOAuth);
+app.get("/api/google/callback", authControllers.googleOAuthCallback);
+app.get("/api/facebook", authControllers.facebookOAuth);
+app.get("/api/facebook/callback", authControllers.facebookOAuthCallback);

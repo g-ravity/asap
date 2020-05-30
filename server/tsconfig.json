@@ -10,5 +10,5 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "../types/*"]
+  "include": ["src/**/*", "../types/*", "global.d.ts"]
 }
