@@ -5,16 +5,29 @@ import * as Yup from "yup";
 import colors from "../../theme/colors";
 import { Button, Input } from "../widgets";
 
+/**
+ * Types
+ */
 interface AuthFormProps {
   isSignUp?: boolean;
   onSubmit: (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => void;
 }
 
+export type InitialAuthValues = typeof initialValues;
+
+/**
+ * Component
+ */
 const AuthForm: React.FC<AuthFormProps> = props => {
   const { isSignUp, onSubmit } = props;
 
   return (
-    <Formik initialValues={initialValues} validationSchema={isSignUp ? SignUpSchema : SignInSchema} onSubmit={onSubmit}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={isSignUp ? SignUpSchema : SignInSchema}
+      onSubmit={onSubmit}
+      validateOnChange={false}
+    >
       <FormContainer isSignUp={isSignUp} className={isSignUp ? "sign-up-container" : "sign-in-container"}>
         <h1>{isSignUp ? "Create Account" : "Sign In"}</h1>
         <div className="my-2 mx-0">
@@ -36,9 +49,8 @@ const AuthForm: React.FC<AuthFormProps> = props => {
 };
 
 /**
- * Helper Variables...
+ * Helper Variables
  */
-
 const initialValues = {
   name: "",
   email: "",
@@ -47,7 +59,7 @@ const initialValues = {
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().email("Invalid Email!").required("Required"),
-  password: Yup.string().min(8, "Invalid Password!").max(255, "Invalid Password!").required("Required")
+  password: Yup.string().min(8, "Too Short!").max(255, "Too Long!").required("Required")
 });
 
 const SignUpSchema = Yup.object().shape({
@@ -56,17 +68,14 @@ const SignUpSchema = Yup.object().shape({
   password: Yup.string().min(8, "Too Short!").max(255, "Too Long!").required("Required")
 });
 
-export type InitialAuthValues = typeof initialValues;
-
 /**
- * Styled components...
+ * Styled components
  */
-
-const FormContainer = styled(({ isSignUp, ...props }) => <Form {...props} />)<{ isSignUp?: boolean }>`
+const FormContainer = styled(Form)<{ isSignUp?: boolean }>`
   top: 0;
   left: 0;
-  opacity: ${props => (props.isSignUp ? 0 : 1)};
-  z-index: ${props => (props.isSignUp ? 0 : 2)};
+  opacity: ${(props): number => (props.isSignUp ? 0 : 1)};
+  z-index: ${(props): number => (props.isSignUp ? 0 : 2)};
   transition: all 0.6s ease-in-out;
   width: 50%;
   height: 100%;
