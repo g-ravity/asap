@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Task Manager & To-Do List - all in one place",
   "scripts": {
-    "start": "npm run build && node build/server/src/index.js",
+    "start": "yarn build && node -r dotenv/config build/server/src/index.js",
     "start-dev": "nodemon",
     "reset": "rimraf ./node_modules && rm yarn.lock && yarn",
     "build": "rimraf ./build && tsc"

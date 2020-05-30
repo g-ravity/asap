@@ -5,10 +5,11 @@
     "lib": ["es6"],
     "allowJs": true,
     "outDir": "build",
+    "typeRoots": ["../types/*"],
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "../types/*", "global.d.ts"]
+  "include": ["src/**/*"]
 }
