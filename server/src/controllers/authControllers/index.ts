@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import * as Yup from "yup";
-import * as bcrypt from "bcryptjs";
 import { getUserDBRef } from "../../utils/firebaseContants";
-import { User, Id } from "../../../../types";
 import { db } from "../../config/firebase";
+import { User } from "../../../../types";
+import createUser from "./createUser";
 
 /**
  * Sign Up
@@ -68,38 +68,13 @@ export const googleOAuthCallback = passport.authenticate("google", {
   successRedirect: "/",
   failureRedirect: "/"
 });
-export const facebookOAuth = passport.authenticate("facebook");
+export const facebookOAuth = passport.authenticate("facebook", {
+  scope: "email"
+});
 export const facebookOAuthCallback = passport.authenticate("facebook", {
   successRedirect: "/",
   failureRedirect: "/"
 });
-
-/**
- * Create User
- */
-export const createUser = async (params: Omit<User, "projectIds" | "createdAt">): Promise<User & Id> => {
-  try {
-    const { password } = params;
-
-    const user: User = {
-      ...params,
-      projectIds: [],
-      createdAt: new Date()
-    };
-
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-    }
-
-    const userDocRef = db.collection(getUserDBRef()).doc();
-    await userDocRef.set(user);
-
-    return { id: userDocRef.id, ...user };
-  } catch (err) {
-    throw new Error(err);
-  }
-};
 
 /**
  * Auth Schema

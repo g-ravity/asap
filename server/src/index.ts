@@ -5,6 +5,7 @@ import passport from "passport";
 import express from "express";
 import "./config/firebase";
 import keys from "./config/keys";
+import "./controllers/authControllers/passport";
 import * as authControllers from "./controllers/authControllers";
 
 const app = express();

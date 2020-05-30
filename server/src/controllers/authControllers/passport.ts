@@ -1,14 +1,14 @@
 import * as Yup from "yup";
-import passport from "passport";
-import bcrypt from "bcryptjs";
-import passportLocal from "passport-local";
 import passportGoogle from "passport-google-oauth20";
 import passportFacebook from "passport-facebook";
-import keys from "../../config/keys";
-import { db } from "../../config/firebase";
+import passportLocal from "passport-local";
+import passport from "passport";
+import bcrypt from "bcryptjs";
 import { getUserDBRef } from "../../utils/firebaseContants";
 import { User, Id } from "../../../../types";
-import { createUser } from "./index";
+import { db } from "../../config/firebase";
+import createUser from "./createUser";
+import keys from "../../config/keys";
 
 passport.serializeUser((user: User & Id, done) => {
   done(null, { id: user.id, name: user.name });
