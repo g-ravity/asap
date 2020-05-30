@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Task Manager & To-Do List - all in one place",
   "scripts": {
-    "start": "npm run build && node build/index.js",
-    "start:dev": "nodemon",
+    "start": "npm run build && node build/server/src/index.js",
+    "start-dev": "nodemon",
     "reset": "rimraf ./node_modules && rm yarn.lock && yarn",
     "build": "rimraf ./build && tsc"
   },
@@ -13,19 +13,28 @@
   "author": "Slytherin Inc.",
   "license": "MIT",
   "private": true,
+  "dependencies": {
+    "@sentry/node": "5.15.5",
+    "bcrypt": "^4.0.1",
+    "cookie-session": "^1.4.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.12.1",
+    "passport": "^0.4.1",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0",
+    "yup": "^0.29.1"
+  },
   "devDependencies": {
+    "@types/cookie-session": "^2.0.40",
     "@types/errorhandler": "^1.5.0",
     "@types/express": "^4.17.6",
     "@types/node": "^14.0.5",
+    "@types/passport": "^1.0.3",
     "dotenv": "^8.2.0",
     "errorhandler": "^1.5.1",
     "rimraf": "^3.0.2",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.3"
-  },
-  "dependencies": {
-    "@sentry/node": "5.15.5",
-    "express": "^4.17.1",
-    "firebase-admin": "^8.12.1"
   }
 }

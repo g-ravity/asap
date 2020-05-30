@@ -1,11 +1,15 @@
-import express from "express";
 import * as admin from "firebase-admin";
 import errorhandler from "errorhandler";
 import * as Sentry from "@sentry/node";
+import session from "cookie-session";
+import passport from "passport";
+import express from "express";
+import keys from "./utils/keys";
 import * as serviceAccount from "./serviceAccountKey.json";
 
 const app = express();
-const port = process.env.port || 8080;
+app.enable("trust proxy");
+
 const params = {
   type: serviceAccount.type,
   projectId: serviceAccount.project_id,
@@ -18,33 +22,43 @@ const params = {
   authProviderX509CertUrl: serviceAccount.auth_provider_x509_cert_url,
   clientC509CertUrl: serviceAccount.client_x509_cert_url
 };
+
 admin.initializeApp({
   credential: admin.credential.cert(params),
   databaseURL: "https://asap-9b414.firebaseio.com"
 });
-Sentry.init({
-  dsn: process.env.SENTRY_ENV,
-  attachStacktrace: true,
-  debug: true,
-  release: process.env.RELEASE,
-  environment: "production"
-});
 
-app.use(Sentry.Handlers.requestHandler());
-
-app.get("/", (req, res) => {
-  throw new Error("Something Went Out Of Control");
-  res.send("Welcome to this page.");
-});
-
-if (process.env.NODE_ENV === "production") {
+// ERROR HANDLER
+if (keys.nodeEnv === "development") {
+  app.use(errorhandler());
+} else {
+  Sentry.init({
+    dsn: keys.sentryDSN,
+    attachStacktrace: true,
+    debug: true,
+    release: keys.release,
+    environment: "production"
+  });
+  app.use(Sentry.Handlers.requestHandler());
   app.use(Sentry.Handlers.errorHandler());
 }
 
-if (process.env.NODE_ENV === "development") {
-  app.use(errorhandler());
-}
+// COOKIE SESSION
+app.use(
+  session({
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    secret: keys.cookieSecret
+  })
+);
 
-app.listen(port, () => {
-  console.log(`Server is listening on port: ${port}`);
+// PASSPORT MIDDLEWARE
+app.use(passport.initialize());
+app.use(passport.session());
+
+// BODYPARSER
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+app.listen(keys.port, () => {
+  console.log(`Server is listening on port: ${keys.port}`);
 });
