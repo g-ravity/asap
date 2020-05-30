@@ -7,6 +7,7 @@ import "./config/firebase";
 import keys from "./config/keys";
 import "./controllers/authControllers/passport";
 import * as authControllers from "./controllers/authControllers";
+import * as projectController from "./controllers/projectController";
 
 const app = express();
 app.enable("trust proxy");
@@ -14,17 +15,23 @@ app.enable("trust proxy");
 // ERROR HANDLER
 if (keys.nodeEnv === "development") {
   app.use(errorhandler());
-} else {
-  Sentry.init({
-    dsn: keys.sentryDSN,
-    attachStacktrace: true,
-    debug: true,
-    release: keys.release,
-    environment: "production"
-  });
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.errorHandler());
 }
+Sentry.init({
+  dsn: keys.sentryDSN,
+  attachStacktrace: true,
+  debug: true,
+  release: keys.release,
+  environment: keys.nodeEnv,
+  beforeSend: (event, hint) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.error(hint?.originalException);
+      return null;
+    }
+    return event;
+  }
+});
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.errorHandler());
 
 // COOKIE SESSION
 app.use(
@@ -40,6 +47,8 @@ app.use(passport.session());
 
 // AUTH MIDDLEWARE
 const verifyAuth = (req: Request, res: Response, next: NextFunction): void => {
+  console.log("User: ", req.user);
+  console.log("Request Body: ", req.body);
   if (req.user) {
     next();
   } else {
@@ -66,5 +75,9 @@ app.get("/api/auth/google", authControllers.googleOAuth);
 app.get("/api/auth/google/callback", authControllers.googleOAuthCallback);
 app.get("/api/auth/facebook", authControllers.facebookOAuth);
 app.get("/api/auth/facebook/callback", authControllers.facebookOAuthCallback);
+// Project Routes
+app.post("/api/projects/", verifyAuth, projectController.addProject);
+app.put("/api/projects/:projectId", verifyAuth, projectController.updateProject);
+app.delete("/api/projects/:projectId", verifyAuth, projectController.deleteProject);
 
 app.get("/", verifyAuth, (req, res) => res.send("Working !! "));

@@ -14,7 +14,7 @@ export interface UpdateInfo {
 
 export interface Project extends CreateInfo, UpdateInfo {
   name: string;
-  listIds: string[] | null;
+  listIds: string[];
   memberIds: string[];
 }
 export interface User extends Pick<CreateInfo, "createdAt"> {

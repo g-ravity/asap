@@ -11,6 +11,7 @@ import createUser from "./createUser";
 import keys from "../../config/keys";
 
 passport.serializeUser((user: User & Id, done) => {
+  console.log(user);
   done(null, { id: user.id, name: user.name });
 });
 
@@ -28,7 +29,7 @@ passport.use(
         const userDocs = await db.collection(getUserDBRef()).where("email", "==", email).get();
         if (userDocs.empty) return done(null, false);
 
-        const user: User = userDocs.docs.map(doc => doc.data() as User)[0];
+        const user: User & Id = userDocs.docs.map(doc => ({ id: doc.id, ...doc.data() } as User & Id))[0];
 
         const validPassword = await bcrypt.compare(password, user.password!);
         if (!validPassword) return done(null, false);
