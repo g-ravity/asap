@@ -4,12 +4,15 @@ const colors = {
     light: "#82dae7ff",
     dark: "#3aafaeff"
   },
-  error: "#fddae0ff",
+  error: {
+    light: "#fddae0ff",
+    dark: "#ff5254"
+  },
   success: "#76fcbeff",
   grey: {
     primary: "#f1f5fd",
     secondary: "#e9ebfb",
-    tertiary: "#b7b9ca"
+    tertiary: "#cccccc"
   },
   background: "#ffffff",
   text: {
