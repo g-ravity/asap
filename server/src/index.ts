@@ -1,21 +1,17 @@
 import * as Sentry from "@sentry/node";
-import errorhandler from "errorhandler";
 import session from "cookie-session";
+import express from "express";
 import passport from "passport";
-import express, { Request, Response, NextFunction } from "express";
 import "./config/firebase";
 import keys from "./config/keys";
 import "./controllers/authControllers/passport";
-import * as authControllers from "./controllers/authControllers";
-import * as projectController from "./controllers/projectController";
+import { verifyAuth } from "./middleware/authMiddleware";
+import { authRoutes, projectRoutes } from "./routes";
 
 const app = express();
 app.enable("trust proxy");
 
 // ERROR HANDLER
-if (keys.nodeEnv === "development") {
-  app.use(errorhandler());
-}
 Sentry.init({
   dsn: keys.sentryDSN,
   attachStacktrace: true,
@@ -45,17 +41,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// AUTH MIDDLEWARE
-const verifyAuth = (req: Request, res: Response, next: NextFunction): void => {
-  console.log("User: ", req.user);
-  console.log("Request Body: ", req.body);
-  if (req.user) {
-    next();
-  } else {
-    res.status(401).send("Not Authorized!");
-  }
-};
-
 // BODYPARSER
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -64,20 +49,10 @@ app.use(express.json());
 app.listen(keys.port, () => console.log(`Server is listening on port: ${keys.port}`));
 
 /**
- * ROUTES...
+ * ROUTES
  */
+// TODO: Place this route into correct folder, after hosting is configured
+app.get("/", verifyAuth, (_, res) => res.send("Logged In!"));
 
-/* User Routes */
-app.post("/api/signUp", authControllers.signUp);
-app.post("/api/signIn", authControllers.signIn);
-app.get("/api/signOut", authControllers.signOut);
-app.get("/api/auth/google", authControllers.googleOAuth);
-app.get("/api/auth/google/callback", authControllers.googleOAuthCallback);
-app.get("/api/auth/facebook", authControllers.facebookOAuth);
-app.get("/api/auth/facebook/callback", authControllers.facebookOAuthCallback);
-// Project Routes
-app.post("/api/projects/", verifyAuth, projectController.addProject);
-app.put("/api/projects/:projectId", verifyAuth, projectController.updateProject);
-app.delete("/api/projects/:projectId", verifyAuth, projectController.deleteProject);
-
-app.get("/", verifyAuth, (req, res) => res.send("Working !! "));
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
