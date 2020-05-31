@@ -3,9 +3,9 @@ import passport from "passport";
 import * as Yup from "yup";
 import * as Sentry from "@sentry/node";
 import { User } from "../../../../types";
-import schema from "../../config/yup";
+import getSchema from "../../config/yup";
+import { UserDBRef, UserDocRef } from "../../utils/firebaseContants";
 import createUser from "./createUser";
-import { UserDB, UserDoc } from "../../utils/firebaseContants";
 
 /**
  * Types
@@ -22,7 +22,7 @@ export const fetchUser = async (req: Request<{}, null, null>, res: Response): Pr
   try {
     const { id } = req.user!;
 
-    const userDoc = await UserDoc(id).get();
+    const userDoc = await UserDocRef(id).get();
     if (!userDoc.exists) throw new Error();
 
     const user = userDoc.data() as User;
@@ -40,8 +40,10 @@ export const signUp = async (req: SignUpReq, res: SignUpRes): Promise<SignUpRes 
     await SignUpSchema.validate(req.body);
 
     const { email } = req.body;
-    const userDocs = await UserDB().where("email", "==", email).get();
-    if (!userDocs.empty) return res.status(400).send({ email: "Email already registered" });
+    const userDocs = await UserDBRef().where("email", "==", email).get();
+
+    if (!userDocs.empty && userDocs.docs[0].get("password"))
+      return res.status(400).send({ email: "Email already registered" });
 
     const user = await createUser(req.body);
 
@@ -81,7 +83,7 @@ export const signIn = async (
 
 export const signOut = (req: Request, res: Response<string>): Response<string> => {
   req.logOut();
-  return res.send("Logged Out!");
+  return res.status(200).send("Logged Out!");
 };
 
 // OAUTH CONTROLLERS
@@ -106,7 +108,7 @@ export const facebookOAuthCallback = passport.authenticate("facebook", {
 /**
  * Validation Schema
  */
-const SignUpSchema = schema({
+const SignUpSchema = getSchema({
   name: Yup.string().min(3, "Too Short!").max(50, "Too Long!").required("Required"),
   email: Yup.string().email("Invalid Email!").required("Required"),
   password: Yup.string().min(8, "Too Short!").max(255, "Too Long!").required("Required")

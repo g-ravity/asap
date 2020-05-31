@@ -7,8 +7,8 @@ POST http://localhost:8080/api/auth/signUp
 content-type: application/json
 
 {
-  "name": "Tushar Maharana",
-  "email": "tushar@gmail.com",
+  "name": "Ravik Ganguly",
+  "email": "theravikganguly@gmail.com",
   "password": "12345678"
 }
 
@@ -18,7 +18,7 @@ POST http://localhost:8080/api/auth/signIn
 content-type: application/json
 
 {
-  "email": "tushar@gmail.com",
+  "email": "pranabs1ngh@gmail.com",
   "password": "12345678"
 }
 
@@ -32,38 +32,61 @@ POST http://localhost:8080/api/projects
 content-type: application/json
 
 {
-  "project": {
-    "name": "New Project"
-  }
+  "name": "African Price"
 }
  
 ###
 
-PUT http://localhost:8080/api/projects/ZkKFeCq2IANnGJXL06wL
+PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
 content-type: application/json
 
 {
-  "project": {
-    "name": "Updated Project",
-    "listIds": ["1"], 
-    "memberIds": [],
-    "extraField": "Yup throws error on extra fields!"
-  }
+  "name": "Asap Task Manager",
+  "memberIds": []
 }
 
 ###
 
-PUT http://localhost:8080/api/projects/ZkKFeCq2IANnGJXL06wL
+PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
 content-type: application/json
 
 {
-  "project": {
-    "name": "Updated Project",
-    "listIds": ["1", "2"], 
-    "memberIds": []
-  }
+  "name": "Updated Project",
+  "extraField": "Yup throws error!"
 }
 
 ###
 
-DELETE  http://localhost:8080/api/projects/xOQlWdISXztYNYJluhWB
+DELETE http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
+
+###
+
+POST http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists
+content-type: application/json
+
+{
+  "name": "Admin Bro Integration"
+}
+ 
+###
+
+PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/6KEi1MLduZA3J53oaIsE
+content-type: application/json
+
+{
+  "name": "Remove Strapi",
+  "extraField": "Yup throws error on extra fields!"
+}
+
+###
+
+PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/6KEi1MLduZA3J53oaIsE
+content-type: application/json
+
+{
+  "name": "Remove Strapi"
+}
+
+###
+
+DELETE  http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/6KEi1MLduZA3J53oaIsE

@@ -6,8 +6,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 import * as Yup from "yup";
 import { Id, User } from "../../../../types";
 import keys from "../../config/keys";
-import schema from "../../config/yup";
-import { UserDB } from "../../utils/firebaseContants";
+import getSchema from "../../config/yup";
+import { UserDBRef } from "../../utils/firebaseContants";
 import createUser from "./createUser";
 
 passport.serializeUser((user: User & Id, done) => {
@@ -23,7 +23,7 @@ passport.use(
     try {
       await SignInSchema.validate({ email, password });
 
-      const userDocs = await UserDB().where("email", "==", email).get();
+      const userDocs = await UserDBRef().where("email", "==", email).get();
       if (userDocs.empty) return done(null, false);
 
       const user: User & Id = userDocs.docs.map(doc => ({ id: doc.id, ...doc.data() } as User & Id))[0];
@@ -46,7 +46,7 @@ passport.use(
       callbackURL: `/api/auth/google/callback`
     },
     async (_, __, profile, done) => {
-      const userDocs = await UserDB().where("googleID", "==", profile.id).get();
+      const userDocs = await UserDBRef().where("googleID", "==", profile.id).get();
 
       if (!userDocs.empty) {
         const user: User = userDocs.docs.map(doc => doc.data() as User)[0];
@@ -74,7 +74,7 @@ passport.use(
       profileFields: ["name", "emails", "picture.type(large)"]
     },
     async (_, __, profile, done) => {
-      const userDocs = await UserDB().where("googleID", "==", profile.id).get();
+      const userDocs = await UserDBRef().where("facebookId", "==", profile.id).get();
 
       if (!userDocs.empty) {
         const user: User = userDocs.docs.map(doc => doc.data() as User)[0];
@@ -96,7 +96,7 @@ passport.use(
 /**
  * Validation Schema
  */
-const SignInSchema = schema({
+const SignInSchema = getSchema({
   email: Yup.string().email("Invalid Email!").required("Required"),
   password: Yup.string().min(8, "Invalid Password!").max(255, "Invalid Password!").required("Required")
 });
