@@ -1,4 +1,4 @@
-import * as admin from "firebase-admin";
+import * as fbAdmin from "firebase-admin";
 import * as serviceAccount from "../serviceAccountKey.json";
 
 const params = {
@@ -14,9 +14,10 @@ const params = {
   clientC509CertUrl: serviceAccount.client_x509_cert_url
 };
 
-admin.initializeApp({
-  credential: admin.credential.cert(params),
+fbAdmin.initializeApp({
+  credential: fbAdmin.credential.cert(params),
   databaseURL: "https://asap-9b414.firebaseio.com"
 });
 
-export const db = admin.firestore();
+export const db = fbAdmin.firestore();
+export const admin = fbAdmin;
