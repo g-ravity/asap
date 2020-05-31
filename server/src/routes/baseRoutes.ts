@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/node";
 import { Request, Response, Router } from "express";
 import { User } from "../../../types";
 import { verifyAuth } from "../middleware/authMiddleware";
-import { UserDoc } from "../utils/firebaseContants";
+import { UserDocRef } from "../utils/firebaseContants";
 
 export const router = Router();
 
@@ -13,7 +13,7 @@ router.get(
     try {
       const { id } = req.user!;
 
-      const userDoc = await UserDoc(id).get();
+      const userDoc = await UserDocRef(id).get();
       if (!userDoc.exists) throw new Error();
 
       const user = userDoc.data() as User;

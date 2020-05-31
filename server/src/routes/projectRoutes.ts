@@ -6,7 +6,7 @@ import { ItemIds, Project, UserIdWithName } from "../../../types";
 import { db } from "../config/firebase";
 import getSchema from "../config/yup";
 import { verifyAuth } from "../middleware/authMiddleware";
-import { ProjectDB, ProjectDoc, UserDoc } from "../utils/firebaseContants";
+import { ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
 import { router as listRoutes } from "./listRoutes";
 
 export const router = Router();
@@ -41,9 +41,9 @@ router.post(
 
       // Batched Write
       const batch = db.batch();
-      const projectDoc = ProjectDB().doc();
-      batch.set(projectDoc, projectForSubmit);
-      batch.update(UserDoc(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDoc.id) });
+      const projectDocRef = ProjectDBRef().doc();
+      batch.set(projectDocRef, projectForSubmit);
+      batch.update(UserDocRef(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDocRef.id) });
       await batch.commit();
 
       return res.status(200).send("Project created successfully!");
@@ -72,11 +72,11 @@ router.put(
 
     try {
       if (!Object.keys(project).length) {
-        throw new Error("Empty object not allowed!");
+        res.status(400).send("Empty object not allowed!");
       }
 
       await ProjectUpdateSchema.validate(project);
-      const projectDoc = await ProjectDoc(projectId).get();
+      const projectDoc = await ProjectDocRef(projectId).get();
       if (!projectDoc.exists) {
         return res.status(404).send("Project doesn't exist");
       }
@@ -89,7 +89,7 @@ router.put(
       };
 
       console.log("Project For Submit: ", projectForSubmit);
-      await ProjectDoc(projectId).update(projectForSubmit);
+      await ProjectDocRef(projectId).update(projectForSubmit);
       return res.status(200).send("Project successfully updated!");
     } catch (err) {
       Sentry.captureException(err);
@@ -114,15 +114,15 @@ router.delete(
     console.log("Project ID: ", projectId);
 
     try {
-      const projectDoc = await ProjectDoc(projectId).get();
+      const projectDoc = await ProjectDocRef(projectId).get();
       if (!projectDoc.exists) {
         return res.status(404).send("Project doesn't exist");
       }
 
       // Batched Write
       const batch = db.batch();
-      batch.delete(ProjectDoc(projectId));
-      batch.update(UserDoc(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
+      batch.delete(ProjectDocRef(projectId));
+      batch.update(UserDocRef(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
       await batch.commit();
 
       return res.status(200).send("Project successfully deleted!");

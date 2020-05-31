@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { User } from "../../../types";
 import getSchema from "../config/yup";
 import { createUser } from "../middleware/authMiddleware";
-import { UserDB } from "../utils/firebaseContants";
+import { UserDBRef } from "../utils/firebaseContants";
 
 export const router = Router();
 
@@ -27,7 +27,7 @@ router.post(
       await SignUpSchema.validate(req.body);
 
       const { email } = req.body;
-      const userDocs = await UserDB().where("email", "==", email).get();
+      const userDocs = await UserDBRef().where("email", "==", email).get();
 
       if (!userDocs.empty && userDocs.docs[0].get("password"))
         return res.status(400).send({ email: "Email already registered" });
