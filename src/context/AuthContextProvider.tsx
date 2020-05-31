@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import * as Sentry from "@sentry/browser";
 import { Loader } from "../components/widgets";
 import { InitialAuthValues } from "../components/auth/AuthForm";
@@ -8,22 +8,22 @@ import { User } from "../../types";
 export const AuthProvider: React.FC = props => {
   const [userData, setUserData] = useState<User | undefined | null>(undefined);
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  if (typeof userData === undefined) {
-    return <Loader />;
-  }
-
-  const fetchUser = async (): Promise<void> => {
+  const fetchUser = useCallback(async (): Promise<void> => {
     try {
       const user = await request<null, User | null>("/");
       setUserData(user);
     } catch (err) {
       Sentry.captureException(err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  if (typeof userData === undefined) {
+    return <Loader />;
+  }
 
   const signIn = async (values: InitialAuthValues): Promise<void> => {
     const user = await request<InitialAuthValues, User>("/auth/signIn", {
