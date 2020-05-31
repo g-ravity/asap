@@ -1,15 +1,13 @@
-export const getProjectDBRef = (): string => {
-  return `projects`;
-};
+import { db } from "../config/firebase";
 
-export const getProjectDocRef = (projectId: string): string => {
-  return `projects/${projectId}`;
-};
+export const ProjectDB = (): FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData> =>
+  db.collection(`projects`);
 
-export const getUserDBRef = (): string => {
-  return `users`;
-};
+export const ProjectDoc = (id: string): FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> =>
+  db.doc(`projects/${id}`);
 
-export const getUserDocRef = (userId: string): string => {
-  return `users/${userId}`;
-};
+export const UserDB = (): FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData> =>
+  db.collection(`users`);
+
+export const UserDoc = (id: string): FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> =>
+  db.doc(`users/${id}`);
