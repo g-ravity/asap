@@ -31,7 +31,7 @@ POST http://localhost:8080/api/projects
 content-type: application/json
 
 {
-  "name": "African Price"
+  "name": "My Freelancer"
 }
  
 ###
@@ -40,7 +40,7 @@ PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
 content-type: application/json
 
 {
-  "name": "Asap Task Manager",
+  "name": "Asap",
   "memberIds": []
 }
 

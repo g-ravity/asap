@@ -4,9 +4,8 @@ import express from "express";
 import passport from "passport";
 import "./config/firebase";
 import keys from "./config/keys";
-import "./controllers/authControllers/passport";
-import { verifyAuth } from "./middleware/authMiddleware";
-import { authRoutes, projectRoutes } from "./routes";
+import { authRoutes, baseRoutes, projectRoutes } from "./routes";
+import "./utils/passport.utils";
 
 const app = express();
 app.enable("trust proxy");
@@ -51,8 +50,6 @@ app.listen(keys.port, () => console.log(`Server is listening on port: ${keys.por
 /**
  * ROUTES
  */
-// TODO: Place this route into correct folder, after hosting is configured
-app.get("/", verifyAuth, (_, res) => res.send("Logged In!"));
-
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api", baseRoutes);

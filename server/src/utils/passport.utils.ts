@@ -4,11 +4,11 @@ import { Strategy as FacebookStrategy } from "passport-facebook";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
 import * as Yup from "yup";
-import { Id, User } from "../../../../types";
-import keys from "../../config/keys";
-import getSchema from "../../config/yup";
-import { UserDB } from "../../utils/firebaseContants";
-import createUser from "./createUser";
+import { Id, User } from "../../../types";
+import keys from "../config/keys";
+import getSchema from "../config/yup";
+import { createUser } from "../middleware/authMiddleware";
+import { UserDB } from "./firebaseContants";
 
 passport.serializeUser((user: User & Id, done) => {
   done(null, { id: user.id, name: user.name });
