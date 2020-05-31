@@ -1,47 +1,28 @@
 import * as Sentry from "@sentry/node";
 import { Request, Response } from "express";
+import { firestore } from "firebase-admin";
 import * as Yup from "yup";
-import { Project, UserIdWithName } from "../../../types";
-import schema from "../config/yup";
-import { ProjectDB, ProjectDoc } from "../utils/firebaseContants";
+import { ItemIds, Project, UserIdWithName } from "../../../types";
+import { db } from "../config/firebase";
+import getSchema from "../config/yup";
+import { ProjectDB, ProjectDoc, UserDoc } from "../utils/firebaseContants";
 
 /**
  * Types
  */
-type AddProjectReq = Request<
-  {},
-  null,
-  {
-    project: Pick<Project, "name" | "listIds" | "memberIds">;
-  }
->;
-
-type UpdateProjectReq = Request<
-  {
-    projectId: string;
-  },
-  null,
-  {
-    project: Pick<Project, "name" | "listIds" | "memberIds">;
-  }
->;
-
-type DeleteProjectReq = Request<
-  {
-    projectId: string;
-  },
-  null,
-  {}
->;
+type AddProjectReq = Request<{}, null, Pick<Project, "name">>;
+type UpdateProjectReq = Request<Pick<ItemIds, "projectId">, null, Pick<Project, "name" | "memberIds">>;
+type DeleteProjectReq = Request<Pick<ItemIds, "projectId">, null, {}>;
+type ProjectRes = Response<string>;
 
 /**
  * Controllers
  */
-export const addProject = async (req: AddProjectReq, res: Response<string>): Promise<Response<string>> => {
-  const { project } = req.body;
+export const addProject = async (req: AddProjectReq, res: ProjectRes): Promise<ProjectRes> => {
+  const project = req.body;
 
   try {
-    await projectCreateSchema.validate(project);
+    await ProjectCreateSchema.validate(project);
     const user: UserIdWithName = { id: req.user!.id, name: req.user!.name };
     const projectForSubmit: Partial<Project> = {
       ...project,
@@ -52,17 +33,23 @@ export const addProject = async (req: AddProjectReq, res: Response<string>): Pro
     };
 
     console.log("Project For Submit: ", projectForSubmit);
-    await ProjectDB().add(projectForSubmit);
-    res.send("Project created successfully!");
-    return res;
+
+    // Batched Write
+    const batch = db.batch();
+    const projectDoc = ProjectDB().doc();
+    batch.set(projectDoc, projectForSubmit);
+    batch.update(UserDoc(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDoc.id) });
+    await batch.commit();
+
+    return res.status(200).send("Project created successfully!");
   } catch (err) {
     Sentry.captureException(err);
     return res.status(500).send("Something Went Wrong!");
   }
 };
 
-export const updateProject = async (req: UpdateProjectReq, res: Response<string>): Promise<Response<string>> => {
-  const { project } = req.body;
+export const updateProject = async (req: UpdateProjectReq, res: ProjectRes): Promise<ProjectRes> => {
+  const project = req.body;
   const { projectId } = req.params;
   console.log("Project ID: ", projectId);
 
@@ -71,7 +58,7 @@ export const updateProject = async (req: UpdateProjectReq, res: Response<string>
       throw new Error("Empty object not allowed!");
     }
 
-    await projectUpdateSchema.validate(project);
+    await ProjectUpdateSchema.validate(project);
     const projectDoc = await ProjectDoc(projectId).get();
     if (!projectDoc.exists) {
       return res.status(404).send("Project doesn't exist");
@@ -86,15 +73,14 @@ export const updateProject = async (req: UpdateProjectReq, res: Response<string>
 
     console.log("Project For Submit: ", projectForSubmit);
     await ProjectDoc(projectId).update(projectForSubmit);
-    res.send("Project successfully updated!");
-    return res;
+    return res.status(200).send("Project successfully updated!");
   } catch (err) {
     Sentry.captureException(err);
     return res.status(500).send("Something Went Wrong!");
   }
 };
 
-export const deleteProject = async (req: DeleteProjectReq, res: Response<string>): Promise<Response<string>> => {
+export const deleteProject = async (req: DeleteProjectReq, res: ProjectRes): Promise<ProjectRes> => {
   const { projectId } = req.params;
   console.log("Project ID: ", projectId);
 
@@ -104,9 +90,13 @@ export const deleteProject = async (req: DeleteProjectReq, res: Response<string>
       return res.status(404).send("Project doesn't exist");
     }
 
-    await ProjectDoc(projectId).delete();
-    res.send("Project successfully deleted");
-    return res;
+    // Batched Write
+    const batch = db.batch();
+    batch.delete(ProjectDoc(projectId));
+    batch.update(UserDoc(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
+    await batch.commit();
+
+    return res.status(200).send("Project successfully deleted!");
   } catch (err) {
     Sentry.captureException(err);
     return res.status(500).send("Something Went Wrong!");
@@ -116,10 +106,9 @@ export const deleteProject = async (req: DeleteProjectReq, res: Response<string>
 /**
  * Validation Schemas
  */
-const projectCreateSchema = schema({ name: Yup.string().min(3, "Too short!").required("Required!") });
+const ProjectCreateSchema = getSchema({ name: Yup.string().min(3, "Too short!").required("Required!") });
 
-const projectUpdateSchema = schema({
+const ProjectUpdateSchema = getSchema({
   name: Yup.string().min(3, "Too short!"),
-  listIds: Yup.array().ensure().of(Yup.string()),
   memberIds: Yup.array().ensure().of(Yup.string())
 });
