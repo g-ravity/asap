@@ -6,7 +6,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import * as Yup from "yup";
 import { Id, User } from "../../../../types";
 import keys from "../../config/keys";
-import schema from "../../config/yup";
+import getSchema from "../../config/yup";
 import { UserDB } from "../../utils/firebaseContants";
 import createUser from "./createUser";
 
@@ -74,7 +74,7 @@ passport.use(
       profileFields: ["name", "emails", "picture.type(large)"]
     },
     async (_, __, profile, done) => {
-      const userDocs = await UserDB().where("googleID", "==", profile.id).get();
+      const userDocs = await UserDB().where("facebookId", "==", profile.id).get();
 
       if (!userDocs.empty) {
         const user: User = userDocs.docs.map(doc => doc.data() as User)[0];
@@ -96,7 +96,7 @@ passport.use(
 /**
  * Validation Schema
  */
-const SignInSchema = schema({
+const SignInSchema = getSchema({
   email: Yup.string().email("Invalid Email!").required("Required"),
   password: Yup.string().min(8, "Invalid Password!").max(255, "Invalid Password!").required("Required")
 });

@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import * as Yup from "yup";
 import { User } from "../../../../types";
-import schema from "../../config/yup";
-import createUser from "./createUser";
+import getSchema from "../../config/yup";
 import { UserDB } from "../../utils/firebaseContants";
+import createUser from "./createUser";
 
 /**
  * Types
@@ -25,7 +25,9 @@ export const signUp = async (req: SignUpReq, res: SignUpRes): Promise<SignUpRes 
 
     const { email } = req.body;
     const userDocs = await UserDB().where("email", "==", email).get();
-    if (!userDocs.empty) return res.status(400).send({ email: "Email already registered" });
+
+    if (!userDocs.empty && userDocs.docs[0].get("password"))
+      return res.status(400).send({ email: "Email already registered" });
 
     const user = await createUser(req.body);
 
@@ -56,7 +58,7 @@ export const signIn = async (req: SignInReq, res: Response<string>, next: NextFu
 
 export const signOut = (req: Request, res: Response<string>): Response<string> => {
   req.logOut();
-  return res.send("Logged Out!");
+  return res.status(200).send("Logged Out!");
 };
 
 // OAUTH CONTROLLERS
@@ -81,7 +83,7 @@ export const facebookOAuthCallback = passport.authenticate("facebook", {
 /**
  * Validation Schema
  */
-const SignUpSchema = schema({
+const SignUpSchema = getSchema({
   name: Yup.string().min(3, "Too Short!").max(50, "Too Long!").required("Required"),
   email: Yup.string().email("Invalid Email!").required("Required"),
   password: Yup.string().min(8, "Too Short!").max(255, "Too Long!").required("Required")
