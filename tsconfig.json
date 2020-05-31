@@ -20,7 +20,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "allowJs": true,
-    "strict": true
+    "strict": true,
+    "strictNullChecks": false
   },
   "exclude": ["node_modules", "build", "scripts", "server"],
   "include": ["src"]

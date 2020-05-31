@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import * as Yup from "yup";
+import * as Sentry from "@sentry/node";
 import { User } from "../../../../types";
 import schema from "../../config/yup";
 import createUser from "./createUser";
-import { UserDB } from "../../utils/firebaseContants";
+import { UserDB, UserDoc } from "../../utils/firebaseContants";
 
 /**
  * Types
@@ -17,6 +18,21 @@ type SignInReq = Request<{}, null, Pick<User, "email" | "password">>;
 /**
  * Controllers
  */
+export const fetchUser = async (req: Request<{}, null, null>, res: Response): Promise<Response<User>> => {
+  try {
+    const { id } = req.user!;
+
+    const userDoc = await UserDoc(id).get();
+    if (!userDoc.exists) throw new Error();
+
+    const user = userDoc.data() as User;
+    return res.send(user);
+  } catch (err) {
+    Sentry.captureException(err);
+    return res.status(500).send({ message: "Something Went Wrong!" });
+  }
+};
+
 export const signUp = async (req: SignUpReq, res: SignUpRes): Promise<SignUpRes | void> => {
   console.log("SignUp: ", req.body);
 
@@ -32,24 +48,33 @@ export const signUp = async (req: SignUpReq, res: SignUpRes): Promise<SignUpRes 
     // CREATE SESSION
     return req.login(user, err => {
       if (err) return res.status(400).send(err);
-      return res.status(200).send({ message: "Registration Successful!" });
+      return res.status(200).send(user);
     });
   } catch (err) {
-    console.log(err);
-    return res.status(400).send({ message: "Something went wrong!" });
+    Sentry.captureException(err);
+    return res.status(500).send({ message: "Something Went Wrong!" });
   }
 };
 
-export const signIn = async (req: SignInReq, res: Response<string>, next: NextFunction): Promise<Response<string>> => {
+interface SignInRes {
+  email: string;
+  password: string;
+}
+
+export const signIn = async (
+  req: SignInReq,
+  res: Response<SignInRes | User>,
+  next: NextFunction
+): Promise<Response<SignInRes | User>> => {
   console.log("SignIn: ", req.body);
 
   return passport.authenticate("local", (error, user) => {
-    if (error || !user) return res.status(400).send("Wrong email or password!");
+    if (error || !user) return res.status(400).send({ email: " ", password: "Wrong email or password!" });
 
     // CREATE SESSION
     return req.login(user, err => {
       if (err) return res.status(400).send(err);
-      return res.status(200).send("Login Successful!");
+      return res.status(200).send(user);
     });
   })(req, res, next);
 };

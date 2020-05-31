@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import { FormikHelpers } from "formik";
 import React, { useRef } from "react";
 import Modal, { ModalProps } from "react-bootstrap/Modal";
 import colors from "../../theme/colors";
 import { Button } from "../widgets";
-import AuthForm, { InitialAuthValues } from "./AuthForm";
+import AuthForm from "./AuthForm";
+import { useAuth } from "../../context/AuthContext";
 
 /**
  * Types
@@ -20,23 +20,19 @@ interface AuthModalProps extends ModalProps {
 const AuthModal: React.FC<AuthModalProps> = props => {
   const { authModalState, ...restProps } = props;
   const containerRef = useRef<HTMLDivElement>(null);
+  const {
+    actions: { signIn, signUp }
+  } = useAuth();
 
   const signInClick = (): void => containerRef.current?.classList.remove("right-panel-active");
 
   const signUpClick = (): void => containerRef.current?.classList.add("right-panel-active");
 
-  const onSignUp = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>): void => {
-    console.log(values);
-  };
-  const onSignIn = (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>): void => {
-    console.log(values);
-  };
-
   return (
     <StyledModal {...restProps}>
       <Container ref={containerRef} className={authModalState === "signUp" ? "right-panel-active" : ""}>
-        <AuthForm onSubmit={onSignIn} />
-        <AuthForm onSubmit={onSignUp} isSignUp />
+        <AuthForm onSubmit={signIn} />
+        <AuthForm onSubmit={signUp} isSignUp />
         <OverlayContainer className="overlay-container">
           <Overlay className="overlay">
             <OverlayComponent onBtnClick={signInClick} />
