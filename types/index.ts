@@ -5,6 +5,12 @@ export interface Id {
   id: string;
 }
 
+export interface ItemIds {
+  projectId: string;
+  listId: string;
+  taskId: string;
+}
+
 export interface CreateInfo {
   createdBy: UserIdWithName;
   createdAt: Date;
@@ -37,4 +43,12 @@ export interface Project extends CreateInfo, UpdateInfo {
   name: string;
   listIds: string[];
   memberIds: string[];
+}
+
+/**
+ * List
+ */
+export interface List extends UpdateInfo {
+  name: string;
+  taskIds: string[];
 }
