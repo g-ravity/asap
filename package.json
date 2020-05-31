@@ -9,6 +9,7 @@
     "eject": "react-scripts eject",
     "reset": "rm -rf node_modules && rm yarn.lock && yarn",
     "install-all": "yarn && yarn server-install",
+    "reset-install": "yarn reset && cd server && yarn reset",
     "start-server": "cd server && yarn start-dev",
     "server-install": "cd server && yarn",
     "lint:fix": "eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
