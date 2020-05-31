@@ -3,7 +3,7 @@ import passport from "passport";
 import * as Yup from "yup";
 import { User } from "../../../../types";
 import getSchema from "../../config/yup";
-import { UserDB } from "../../utils/firebaseContants";
+import { UserDBRef } from "../../utils/firebaseContants";
 import createUser from "./createUser";
 
 /**
@@ -24,7 +24,7 @@ export const signUp = async (req: SignUpReq, res: SignUpRes): Promise<SignUpRes 
     await SignUpSchema.validate(req.body);
 
     const { email } = req.body;
-    const userDocs = await UserDB().where("email", "==", email).get();
+    const userDocs = await UserDBRef().where("email", "==", email).get();
 
     if (!userDocs.empty && userDocs.docs[0].get("password"))
       return res.status(400).send({ email: "Email already registered" });

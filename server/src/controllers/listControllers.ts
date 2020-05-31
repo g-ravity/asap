@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { ItemIds, List, UserIdWithName } from "../../../types";
 import { db } from "../config/firebase";
 import getSchema from "../config/yup";
-import { ListDB, ListDoc, ProjectDoc } from "../utils/firebaseContants";
+import { ListDBRef, ListDocRef, ProjectDocRef } from "../utils/firebaseContants";
 
 /**
  * Types
@@ -24,7 +24,7 @@ export const addList = async (req: AddListReq, res: ListRes): Promise<ListRes> =
   console.log("Project ID: ", projectId);
 
   try {
-    const projectDoc = await ProjectDoc(projectId).get();
+    const projectDoc = await ProjectDocRef(projectId).get();
     if (!projectDoc.exists) {
       return res.status(404).send("Project doesn't exist!");
     }
@@ -42,9 +42,9 @@ export const addList = async (req: AddListReq, res: ListRes): Promise<ListRes> =
 
     // Batched Write
     const batch = db.batch();
-    const listDoc = ListDB().doc();
-    batch.set(listDoc, listForSubmit);
-    batch.update(ProjectDoc(projectId), { listIds: firestore.FieldValue.arrayUnion(listDoc.id) });
+    const listDocRef = ListDBRef().doc();
+    batch.set(listDocRef, listForSubmit);
+    batch.update(ProjectDocRef(projectId), { listIds: firestore.FieldValue.arrayUnion(listDocRef.id) });
     await batch.commit();
 
     return res.status(200).send("List created successfully!");
@@ -61,7 +61,7 @@ export const updateList = async (req: UpdateListReq, res: ListRes): Promise<List
 
   try {
     await ListSchema.validate(list);
-    const listDoc = await ListDoc(listId).get();
+    const listDoc = await ListDocRef(listId).get();
     if (!listDoc.exists) {
       return res.status(404).send("List doesn't exist");
     }
@@ -74,7 +74,7 @@ export const updateList = async (req: UpdateListReq, res: ListRes): Promise<List
     };
 
     console.log("List For Submit: ", listForSubmit);
-    await ListDoc(listId).update(listForSubmit);
+    await ListDocRef(listId).update(listForSubmit);
 
     return res.status(200).send("List successfully updated!");
   } catch (err) {
@@ -88,15 +88,15 @@ export const deleteList = async (req: DeleteListReq, res: ListRes): Promise<List
   console.log("List ID: ", listId);
 
   try {
-    const listDoc = await ListDoc(listId).get();
+    const listDoc = await ListDocRef(listId).get();
     if (!listDoc.exists) {
       return res.status(404).send("List doesn't exist");
     }
 
     // Batched Write
     const batch = db.batch();
-    batch.delete(ListDoc(listId));
-    batch.update(ProjectDoc(projectId), { listIds: firestore.FieldValue.arrayRemove(listDoc.id) });
+    batch.delete(ListDocRef(listId));
+    batch.update(ProjectDocRef(projectId), { listIds: firestore.FieldValue.arrayRemove(listDoc.id) });
     await batch.commit();
 
     return res.status(200).send("List successfully deleted!");

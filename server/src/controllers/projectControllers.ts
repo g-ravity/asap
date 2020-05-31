@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { ItemIds, Project, UserIdWithName } from "../../../types";
 import { db } from "../config/firebase";
 import getSchema from "../config/yup";
-import { ProjectDB, ProjectDoc, UserDoc } from "../utils/firebaseContants";
+import { ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
 
 /**
  * Types
@@ -36,9 +36,9 @@ export const addProject = async (req: AddProjectReq, res: ProjectRes): Promise<P
 
     // Batched Write
     const batch = db.batch();
-    const projectDoc = ProjectDB().doc();
-    batch.set(projectDoc, projectForSubmit);
-    batch.update(UserDoc(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDoc.id) });
+    const projectDocRef = ProjectDBRef().doc();
+    batch.set(projectDocRef, projectForSubmit);
+    batch.update(UserDocRef(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDocRef.id) });
     await batch.commit();
 
     return res.status(200).send("Project created successfully!");
@@ -55,11 +55,11 @@ export const updateProject = async (req: UpdateProjectReq, res: ProjectRes): Pro
 
   try {
     if (!Object.keys(project).length) {
-      throw new Error("Empty object not allowed!");
+      return res.status(400).send("Object cannot be empty!");
     }
 
     await ProjectUpdateSchema.validate(project);
-    const projectDoc = await ProjectDoc(projectId).get();
+    const projectDoc = await ProjectDocRef(projectId).get();
     if (!projectDoc.exists) {
       return res.status(404).send("Project doesn't exist");
     }
@@ -72,7 +72,7 @@ export const updateProject = async (req: UpdateProjectReq, res: ProjectRes): Pro
     };
 
     console.log("Project For Submit: ", projectForSubmit);
-    await ProjectDoc(projectId).update(projectForSubmit);
+    await ProjectDocRef(projectId).update(projectForSubmit);
     return res.status(200).send("Project successfully updated!");
   } catch (err) {
     Sentry.captureException(err);
@@ -85,15 +85,15 @@ export const deleteProject = async (req: DeleteProjectReq, res: ProjectRes): Pro
   console.log("Project ID: ", projectId);
 
   try {
-    const projectDoc = await ProjectDoc(projectId).get();
+    const projectDoc = await ProjectDocRef(projectId).get();
     if (!projectDoc.exists) {
       return res.status(404).send("Project doesn't exist");
     }
 
     // Batched Write
     const batch = db.batch();
-    batch.delete(ProjectDoc(projectId));
-    batch.update(UserDoc(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
+    batch.delete(ProjectDocRef(projectId));
+    batch.update(UserDocRef(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
     await batch.commit();
 
     return res.status(200).send("Project successfully deleted!");
