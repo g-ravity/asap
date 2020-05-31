@@ -1,17 +1,16 @@
-import * as Yup from "yup";
-import passportGoogle from "passport-google-oauth20";
-import passportFacebook from "passport-facebook";
-import passportLocal from "passport-local";
+import * as argon2 from "argon2";
 import passport from "passport";
-import bcrypt from "bcryptjs";
-import { getUserDBRef } from "../../utils/firebaseContants";
-import { User, Id } from "../../../../types";
-import { db } from "../../config/firebase";
-import createUser from "./createUser";
+import { Strategy as FacebookStrategy } from "passport-facebook";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as LocalStrategy } from "passport-local";
+import * as Yup from "yup";
+import { Id, User } from "../../../../types";
 import keys from "../../config/keys";
+import schema from "../../config/yup";
+import { UserDB } from "../../utils/firebaseContants";
+import createUser from "./createUser";
 
 passport.serializeUser((user: User & Id, done) => {
-  console.log(user);
   done(null, { id: user.id, name: user.name });
 });
 
@@ -20,37 +19,34 @@ passport.deserializeUser((user: Pick<User & Id, "id" | "name">, done) => {
 });
 
 passport.use(
-  new passportLocal.Strategy(
-    { usernameField: "email", passReqToCallback: true },
-    async (req, email, password, done) => {
-      try {
-        await SignInSchema.validate({ email, password });
+  new LocalStrategy({ usernameField: "email", passReqToCallback: true }, async (_, email, password, done) => {
+    try {
+      await SignInSchema.validate({ email, password });
 
-        const userDocs = await db.collection(getUserDBRef()).where("email", "==", email).get();
-        if (userDocs.empty) return done(null, false);
+      const userDocs = await UserDB().where("email", "==", email).get();
+      if (userDocs.empty) return done(null, false);
 
-        const user: User & Id = userDocs.docs.map(doc => ({ id: doc.id, ...doc.data() } as User & Id))[0];
+      const user: User & Id = userDocs.docs.map(doc => ({ id: doc.id, ...doc.data() } as User & Id))[0];
 
-        const validPassword = await bcrypt.compare(password, user.password!);
-        if (!validPassword) return done(null, false);
+      const validPassword = await argon2.verify(user.password!, password);
+      if (!validPassword) return done(null, false);
 
-        return done(null, user);
-      } catch (err) {
-        return done(null, false, { message: "Email not registered." });
-      }
+      return done(null, user);
+    } catch (err) {
+      return done(null, false, { message: "Wrong Email or Password" });
     }
-  )
+  })
 );
 
 passport.use(
-  new passportGoogle.Strategy(
+  new GoogleStrategy(
     {
       clientID: keys.googleClientID,
       clientSecret: keys.gooogleClientSecret,
       callbackURL: `/api/auth/google/callback`
     },
-    async (accessToken, refreshToken, profile, done) => {
-      const userDocs = await db.collection(getUserDBRef()).where("googleID", "==", profile.id).get();
+    async (_, __, profile, done) => {
+      const userDocs = await UserDB().where("googleID", "==", profile.id).get();
 
       if (!userDocs.empty) {
         const user: User = userDocs.docs.map(doc => doc.data() as User)[0];
@@ -59,7 +55,7 @@ passport.use(
         const user = await createUser({
           name: profile.displayName,
           displayImage: profile.photos![0].value,
-          email: profile.emails![0].value || "",
+          email: profile.emails![0].value,
           googleId: profile.id
         });
 
@@ -70,15 +66,15 @@ passport.use(
 );
 
 passport.use(
-  new passportFacebook.Strategy(
+  new FacebookStrategy(
     {
       clientID: keys.facebookClientID,
       clientSecret: keys.facebookClientSecret,
       callbackURL: `/api/auth/facebook/callback`,
       profileFields: ["name", "emails", "picture.type(large)"]
     },
-    async (accessToken, refreshToken, profile, done) => {
-      const userDocs = await db.collection(getUserDBRef()).where("googleID", "==", profile.id).get();
+    async (_, __, profile, done) => {
+      const userDocs = await UserDB().where("googleID", "==", profile.id).get();
 
       if (!userDocs.empty) {
         const user: User = userDocs.docs.map(doc => doc.data() as User)[0];
@@ -87,8 +83,8 @@ passport.use(
         const user = await createUser({
           name: profile?.name?.givenName.concat(" ", profile.name.familyName) as string,
           displayImage: profile.photos![0].value,
-          email: profile.emails![0].value || "",
-          googleId: profile.id
+          email: profile.emails![0].value,
+          facebookId: profile.id
         });
 
         done(undefined, user);
@@ -98,10 +94,9 @@ passport.use(
 );
 
 /**
- * Auth Schema...
+ * Validation Schema
  */
-
-const SignInSchema = Yup.object().shape({
+const SignInSchema = schema({
   email: Yup.string().email("Invalid Email!").required("Required"),
   password: Yup.string().min(8, "Invalid Password!").max(255, "Invalid Password!").required("Required")
 });

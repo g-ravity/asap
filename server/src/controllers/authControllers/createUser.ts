@@ -1,7 +1,7 @@
-import * as bcrypt from "bcryptjs";
-import { User, Id } from "../../../../types";
-import { db } from "../../config/firebase";
-import { getUserDBRef } from "../../utils/firebaseContants";
+import * as argon2 from "argon2";
+import { randomBytes } from "crypto";
+import { Id, User } from "../../../../types";
+import { UserDB } from "../../utils/firebaseContants";
 
 /**
  * Create User
@@ -15,17 +15,17 @@ export default async (params: Omit<User, "projectIds" | "createdAt">): Promise<U
       projectIds: [],
       createdAt: new Date()
     };
-    console.log(user);
 
     if (password) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+      const salt = randomBytes(32);
+      user.password = await argon2.hash(password, { salt });
     }
 
-    const userDocRef = db.collection(getUserDBRef()).doc();
-    await userDocRef.set(user);
+    console.log("User to be Registered: ", user);
 
-    return { id: userDocRef.id, ...user };
+    const userDoc = await UserDB().add(user);
+
+    return { id: userDoc.id, ...user };
   } catch (err) {
     throw new Error(err);
   }

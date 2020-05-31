@@ -1,3 +1,6 @@
+/**
+ * General
+ */
 export interface Id {
   id: string;
 }
@@ -12,11 +15,9 @@ export interface UpdateInfo {
   updatedAt: Date;
 }
 
-export interface Project extends CreateInfo, UpdateInfo {
-  name: string;
-  listIds: string[];
-  memberIds: string[];
-}
+/**
+ * User
+ */
 export interface User extends Pick<CreateInfo, "createdAt"> {
   name: string;
   email: string;
@@ -28,3 +29,12 @@ export interface User extends Pick<CreateInfo, "createdAt"> {
 }
 
 export type UserIdWithName = Pick<User & Id, "id" | "name">;
+
+/**
+ * Project
+ */
+export interface Project extends CreateInfo, UpdateInfo {
+  name: string;
+  listIds: string[];
+  memberIds: string[];
+}
