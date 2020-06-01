@@ -32,21 +32,21 @@ POST http://localhost:8080/api/projects
 content-type: application/json
 
 {
-  "name": "Nagini"
+  "name": "African Price"
 }
  
 ###
 
-PUT http://localhost:8080/api/projects/6qdzMsPqY51t937OCH4k
+PUT http://localhost:8080/api/projects/5k0xXmPBp7mPQ9kE1jXO
 content-type: application/json
 
 {
-  "name": "Nagini - React"
+  "name": "African Price Backend"
 }
 
 ###
 
-PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
+PUT http://localhost:8080/api/projects/0aDVY88OL7t4UWylQznS
 content-type: application/json
 
 {
@@ -56,36 +56,36 @@ content-type: application/json
 
 ###
 
-DELETE http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
+DELETE http://localhost:8080/api/projects/0aDVY88OL7t4UWylQznS
 
 ###
 
-POST http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists
+POST http://localhost:8080/api/projects/0aDVY88OL7t4UWylQznS/lists
 content-type: application/json
 
 {
-  "name": "Remove Strapi"
+  "name": "Quivia Backend"
 }
  
 ###
 
-PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/6KEi1MLduZA3J53oaIsE
+PUT http://localhost:8080/api/projects/0aDVY88OL7t4UWylQznS/lists/K7igSXV2wuJv00dPuX3J
 content-type: application/json
 
 {
-  "name": "Remove Strapi",
+  "name": "Updated Offline Quiz Games"
+}
+
+###
+
+PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/eE7UgUYgdgBQsynHK8CQ
+content-type: application/json
+
+{
+  "name": "Add Backend",
   "extraField": "Yup throws error on extra fields!"
 }
 
 ###
 
-PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/6KEi1MLduZA3J53oaIsE
-content-type: application/json
-
-{
-  "name": "Remove Strapi"
-}
-
-###
-
-DELETE  http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists/6KEi1MLduZA3J53oaIsE
+DELETE  http://localhost:8080/api/projects/0aDVY88OL7t4UWylQznS/lists/K7igSXV2wuJv00dPuX3J
