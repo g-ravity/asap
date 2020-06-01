@@ -65,7 +65,7 @@ POST http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D/lists
 content-type: application/json
 
 {
-  "name": "Admin Bro Integration"
+  "name": "Remove Strapi"
 }
  
 ###

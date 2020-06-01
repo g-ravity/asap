@@ -6,7 +6,7 @@ import { ItemIds, Project, UserIdWithName } from "../../../types";
 import { db } from "../config/firebase";
 import getSchema from "../config/yup";
 import { verifyAuth } from "../middleware/authMiddleware";
-import { ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
+import { ListDocRef, ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
 import { router as listRoutes } from "./listRoutes";
 
 export const router = Router();
@@ -121,6 +121,10 @@ router.delete(
 
       // Batched Write
       const batch = db.batch();
+      const { listIds }: Partial<Project> = projectDoc.data()!;
+      for (let i = 0; i < listIds!.length; i += 1) {
+        batch.delete(ListDocRef(listIds![i]));
+      }
       batch.delete(ProjectDocRef(projectId));
       batch.update(UserDocRef(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
       await batch.commit();
