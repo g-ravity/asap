@@ -1,12 +1,20 @@
 import * as Sentry from "@sentry/node";
 import { Request, Response, Router } from "express";
 import { firestore } from "firebase-admin";
+import isEqual from "lodash/isEqual";
 import * as Yup from "yup";
-import { Activity, ItemIds, Project, UserIdWithName } from "../../../types/index";
+import { Activity, ItemIds, Message, Project, UserIdWithName } from "../../../types";
 import { db } from "../config/firebase";
 import getSchema from "../config/yup";
 import { verifyAuth } from "../middleware/authMiddleware";
-import { ActivityDBRef, ListDocRef, ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
+import {
+  ActivityDBRef,
+  ActivityDocRef,
+  ListDocRef,
+  ProjectDBRef,
+  ProjectDocRef,
+  UserDocRef
+} from "../utils/firebaseContants";
 import { router as listRoutes } from "./listRoutes";
 
 export const router = Router();
@@ -15,7 +23,7 @@ export const router = Router();
  * Types
  */
 type AddProjectReq = Request<{}, null, Pick<Project, "name">>;
-type ProjectRes = Response<string>;
+type ProjectRes = Response<Message>;
 
 /**
  * Create Project Handler
@@ -28,11 +36,12 @@ router.post(
 
     try {
       await ProjectSchema.validate(project);
+
       const user: UserIdWithName = { id: req.user!.id, name: req.user!.name };
       const projectForSubmit: Omit<Project, "updatedAt" | "updatedBy"> = {
         ...project,
         listIds: [],
-        memberIds: [],
+        members: [user],
         createdAt: new Date(),
         createdBy: user
       };
@@ -48,6 +57,7 @@ router.post(
       };
 
       console.log("Project For Submit: ", projectForSubmit);
+      console.log("Activity For Submit: ", activityForSubmit);
 
       // Batched Write
       const batch = db.batch();
@@ -57,10 +67,10 @@ router.post(
       batch.update(UserDocRef(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDocRef.id) });
       await batch.commit();
 
-      return res.status(200).send("Project created successfully!");
+      return res.status(200).send({ message: "Project created successfully!" });
     } catch (err) {
       Sentry.captureException(err);
-      return res.status(500).send("Something Went Wrong!");
+      return res.status(500).send({ message: "Something Went Wrong!" });
     }
   }
 );
@@ -83,14 +93,20 @@ router.put(
 
     try {
       if (!Object.keys(project).length) {
-        res.status(400).send("Empty object not allowed!");
+        res.status(400).send({ message: "Empty object not allowed!" });
+      }
+
+      const projectDoc = await ProjectDocRef(projectId).get();
+
+      // Permission Checks
+      if (!projectDoc.exists) {
+        return res.status(404).send({ message: "Project doesn't exist" });
+      }
+      if (!(projectDoc.data() as Project).members.filter(member => isEqual(member, req.user!)).length) {
+        return res.status(403).send({ message: "Not a member of the project" });
       }
 
       await ProjectSchema.validate(project);
-      const projectDoc = await ProjectDocRef(projectId).get();
-      if (!projectDoc.exists) {
-        return res.status(404).send("Project doesn't exist");
-      }
 
       const user: UserIdWithName = { id: req.user!.id, name: req.user!.name };
       const projectForSubmit: Partial<Project> = {
@@ -110,18 +126,19 @@ router.put(
       };
 
       console.log("Project For Submit: ", projectForSubmit);
+      console.log("Activity For Submit: ", activityForSubmit);
 
       // Batched Write
       const batch = db.batch();
-      batch.set(ProjectDocRef(projectId), projectForSubmit);
+      batch.update(ProjectDocRef(projectId), projectForSubmit);
       const activityDocRef = ActivityDBRef().doc();
       batch.set(activityDocRef, activityForSubmit);
       await batch.commit();
 
-      return res.status(200).send("Project successfully updated!");
+      return res.status(200).send({ message: "Project successfully updated!" });
     } catch (err) {
       Sentry.captureException(err);
-      return res.status(500).send("Something Went Wrong!");
+      return res.status(500).send({ message: "Something Went Wrong!" });
     }
   }
 );
@@ -143,9 +160,16 @@ router.delete(
 
     try {
       const projectDoc = await ProjectDocRef(projectId).get();
+
+      // Permission Checks
       if (!projectDoc.exists) {
-        return res.status(404).send("Project doesn't exist");
+        return res.status(404).send({ message: "Project doesn't exist" });
       }
+      if (!isEqual((projectDoc.data() as Project).createdBy, req.user!)) {
+        return res.status(403).send({ message: "Only owner can delete project!" });
+      }
+
+      const activityDocs = (await ActivityDBRef().where("projectId", "==", projectId).get()).docs;
 
       // Batched Write
       const batch = db.batch();
@@ -153,14 +177,17 @@ router.delete(
       for (let i = 0; i < listIds!.length; i += 1) {
         batch.delete(ListDocRef(listIds![i]));
       }
+      for (let i = 0; i < activityDocs.length; i += 1) {
+        batch.delete(ActivityDocRef(activityDocs[i].id));
+      }
       batch.delete(ProjectDocRef(projectId));
       batch.update(UserDocRef(req.user!.id), { projectIds: firestore.FieldValue.arrayRemove(projectId) });
       await batch.commit();
 
-      return res.status(200).send("Project successfully deleted!");
+      return res.status(200).send({ message: "Project successfully deleted!" });
     } catch (err) {
       Sentry.captureException(err);
-      return res.status(500).send("Something Went Wrong!");
+      return res.status(500).send({ message: "Something Went Wrong!" });
     }
   }
 );
