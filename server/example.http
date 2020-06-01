@@ -32,17 +32,16 @@ POST http://localhost:8080/api/projects
 content-type: application/json
 
 {
-  "name": "My Freelancer"
+  "name": "Nagini"
 }
  
 ###
 
-PUT http://localhost:8080/api/projects/hgSGaQ9oU7dyz2dWAX5D
+PUT http://localhost:8080/api/projects/6qdzMsPqY51t937OCH4k
 content-type: application/json
 
 {
-  "name": "Asap",
-  "memberIds": []
+  "name": "Nagini - React"
 }
 
 ###

@@ -52,3 +52,16 @@ export interface List extends UpdateInfo {
   name: string;
   taskIds: string[];
 }
+
+/**
+ * Activity
+ */
+export interface Activity {
+  activityType: "create" | "update" | "delete";
+  activityItem: "list" | "project" | "task" | "label" | "status" | "priority";
+  projectId: string;
+  activityCreator: UserIdWithName;
+  activityTime: Date;
+  oldLabel?: string;
+  newLabel?: string;
+}

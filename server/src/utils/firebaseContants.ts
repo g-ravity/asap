@@ -17,3 +17,9 @@ export const ListDBRef = (): FirebaseFirestore.CollectionReference<FirebaseFires
 
 export const ListDocRef = (id: string): FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> =>
   db.doc(`lists/${id}`);
+
+export const ActivityDBRef = (): FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData> =>
+  db.collection(`activity`);
+
+export const ActivityDocRef = (id: string): FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> =>
+  db.doc(`activity/${id}`);

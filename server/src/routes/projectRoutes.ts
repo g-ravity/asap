@@ -2,11 +2,11 @@ import * as Sentry from "@sentry/node";
 import { Request, Response, Router } from "express";
 import { firestore } from "firebase-admin";
 import * as Yup from "yup";
-import { ItemIds, Project, UserIdWithName } from "../../../types";
+import { Activity, ItemIds, Project, UserIdWithName } from "../../../types/index";
 import { db } from "../config/firebase";
 import getSchema from "../config/yup";
 import { verifyAuth } from "../middleware/authMiddleware";
-import { ListDocRef, ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
+import { ActivityDBRef, ListDocRef, ProjectDBRef, ProjectDocRef, UserDocRef } from "../utils/firebaseContants";
 import { router as listRoutes } from "./listRoutes";
 
 export const router = Router();
@@ -18,7 +18,7 @@ type AddProjectReq = Request<{}, null, Pick<Project, "name">>;
 type ProjectRes = Response<string>;
 
 /**
- * Handler
+ * Create Project Handler
  */
 router.post(
   "/",
@@ -27,9 +27,9 @@ router.post(
     const project = req.body;
 
     try {
-      await ProjectCreateSchema.validate(project);
+      await ProjectSchema.validate(project);
       const user: UserIdWithName = { id: req.user!.id, name: req.user!.name };
-      const projectForSubmit: Partial<Project> = {
+      const projectForSubmit: Omit<Project, "updatedAt" | "updatedBy"> = {
         ...project,
         listIds: [],
         memberIds: [],
@@ -37,12 +37,23 @@ router.post(
         createdBy: user
       };
 
+      const projectDocRef = ProjectDBRef().doc();
+
+      const activityForSubmit: Activity = {
+        activityType: "create",
+        activityItem: "project",
+        projectId: projectDocRef.id,
+        activityTime: projectForSubmit.createdAt,
+        activityCreator: user
+      };
+
       console.log("Project For Submit: ", projectForSubmit);
 
       // Batched Write
       const batch = db.batch();
-      const projectDocRef = ProjectDBRef().doc();
       batch.set(projectDocRef, projectForSubmit);
+      const activityDocRef = ActivityDBRef().doc();
+      batch.set(activityDocRef, activityForSubmit);
       batch.update(UserDocRef(user.id), { projectIds: firestore.FieldValue.arrayUnion(projectDocRef.id) });
       await batch.commit();
 
@@ -57,10 +68,10 @@ router.post(
 /**
  * Types
  */
-type UpdateProjectReq = Request<Pick<ItemIds, "projectId">, null, Pick<Project, "name" | "memberIds">>;
+type UpdateProjectReq = Request<Pick<ItemIds, "projectId">, null, Pick<Project, "name">>;
 
 /**
- * Handler
+ * Update Project Handler
  */
 router.put(
   "/:projectId",
@@ -75,7 +86,7 @@ router.put(
         res.status(400).send("Empty object not allowed!");
       }
 
-      await ProjectUpdateSchema.validate(project);
+      await ProjectSchema.validate(project);
       const projectDoc = await ProjectDocRef(projectId).get();
       if (!projectDoc.exists) {
         return res.status(404).send("Project doesn't exist");
@@ -88,8 +99,25 @@ router.put(
         updatedBy: user
       };
 
+      const activityForSubmit: Activity = {
+        activityType: "update",
+        activityItem: "project",
+        activityTime: projectForSubmit.updatedAt!,
+        activityCreator: user,
+        projectId,
+        oldLabel: (projectDoc.data() as Project).name,
+        newLabel: projectForSubmit.name
+      };
+
       console.log("Project For Submit: ", projectForSubmit);
-      await ProjectDocRef(projectId).update(projectForSubmit);
+
+      // Batched Write
+      const batch = db.batch();
+      batch.set(ProjectDocRef(projectId), projectForSubmit);
+      const activityDocRef = ActivityDBRef().doc();
+      batch.set(activityDocRef, activityForSubmit);
+      await batch.commit();
+
       return res.status(200).send("Project successfully updated!");
     } catch (err) {
       Sentry.captureException(err);
@@ -104,7 +132,7 @@ router.put(
 type DeleteProjectReq = Request<Pick<ItemIds, "projectId">, null, {}>;
 
 /**
- * Handler
+ * Delete Project Handler
  */
 router.delete(
   "/:projectId",
@@ -138,16 +166,11 @@ router.delete(
 );
 
 /**
+ * Validation Schemas
+ */
+const ProjectSchema = getSchema({ name: Yup.string().min(3, "Too short!").required("Required!") });
+
+/**
  * List Routes
  */
 router.use("/:projectId/lists", verifyAuth, listRoutes);
-
-/**
- * Validation Schemas
- */
-const ProjectCreateSchema = getSchema({ name: Yup.string().min(3, "Too short!").required("Required!") });
-
-const ProjectUpdateSchema = getSchema({
-  name: Yup.string().min(3, "Too short!"),
-  memberIds: Yup.array().ensure().of(Yup.string())
-});
