@@ -29,6 +29,7 @@ passport.use(
       const user: User & Id = userDocs.docs.map(doc => ({ id: doc.id, ...doc.data() } as User & Id))[0];
 
       const validPassword = await argon2.verify(user.password!, password);
+      delete user.password;
       if (!validPassword) return done(null, false);
 
       return done(null, user);

@@ -9,7 +9,12 @@ import { authRoutes, baseRoutes, projectRoutes } from "./routes";
 import "./utils/passport.utils";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true
+  })
+);
 app.enable("trust proxy");
 
 // ERROR HANDLER
@@ -34,7 +39,8 @@ app.use(Sentry.Handlers.errorHandler());
 app.use(
   session({
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    secret: keys.cookieSecret
+    secret: keys.cookieSecret,
+    httpOnly: false
   })
 );
 

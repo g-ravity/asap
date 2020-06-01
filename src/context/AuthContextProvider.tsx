@@ -1,9 +1,10 @@
 import * as Sentry from "@sentry/browser";
 import React, { useCallback, useEffect, useState } from "react";
+import { isUndefined } from "util";
 import { User } from "../../types";
 import { InitialAuthValues } from "../components/auth/AuthForm";
-import { Loader } from "../components/widgets";
 import AuthContext, { AuthContextType, ReqInit } from "./AuthContext";
+import { Loader } from "../components/widgets";
 
 export const AuthProvider: React.FC = props => {
   const [userData, setUserData] = useState<User | undefined | null>(undefined);
@@ -14,6 +15,7 @@ export const AuthProvider: React.FC = props => {
       setUserData(user);
     } catch (err) {
       Sentry.captureException(err);
+      setUserData(null);
     }
   }, []);
 
@@ -21,23 +23,13 @@ export const AuthProvider: React.FC = props => {
     fetchUser();
   }, [fetchUser]);
 
-  if (typeof userData === undefined) {
-    return <Loader />;
-  }
-
   const signIn = async (values: InitialAuthValues): Promise<void> => {
-    const user = await request<InitialAuthValues, User>("/auth/signIn", {
-      body: values,
-      method: "POST"
-    });
+    const user = await request<InitialAuthValues, User>("/auth/signIn", { body: values });
     setUserData(user);
   };
 
   const signUp = async (values: InitialAuthValues): Promise<void> => {
-    const user = await request<InitialAuthValues, User>("/auth/signUp", {
-      body: values,
-      method: "POST"
-    });
+    const user = await request<InitialAuthValues, User>("/auth/signUp", { body: values });
     setUserData(user);
   };
 
@@ -53,6 +45,7 @@ export const AuthProvider: React.FC = props => {
       method: body ? "POST" : "GET",
       ...customConfig,
       body: body ? JSON.stringify(body) : null,
+      credentials: "include",
       headers: {
         "content-type": "application/json",
         ...customConfig.headers
@@ -79,6 +72,8 @@ export const AuthProvider: React.FC = props => {
     state: { userData },
     actions: { signIn, signUp, signOut, request }
   };
+
+  if (isUndefined(userData)) return <Loader />;
 
   return <AuthContext.Provider value={values} {...props} />;
 };

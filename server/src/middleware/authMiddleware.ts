@@ -5,8 +5,11 @@ import { Id, User } from "../../../types";
 import { UserDBRef, UserDocRef } from "../utils/firebaseContants";
 
 export const verifyAuth = (req: Request, res: Response, next: NextFunction): void => {
+  console.log("Path: ", req.originalUrl);
   console.log("User: ", req.user);
-  console.log("Request Body: ", req.body);
+  if (Object.keys(req.body).length) {
+    console.log("Request Body: ", req.body);
+  }
 
   if (req.isAuthenticated()) {
     next();
@@ -47,6 +50,9 @@ export const createUser = async (params: Omit<User, "projectIds" | "createdAt">)
     console.log("User to be Registered: ", user);
 
     const userDocRef = await UserDBRef().add(user);
+
+    delete user.password;
+
     return { id: userDocRef.id, ...user };
   } catch (err) {
     throw new Error(err);
