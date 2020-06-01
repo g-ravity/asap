@@ -21,6 +21,10 @@ export interface UpdateInfo {
   updatedAt: Date;
 }
 
+export type Message = {
+  message: string;
+};
+
 /**
  * User
  */
@@ -42,7 +46,7 @@ export type UserIdWithName = Pick<User & Id, "id" | "name">;
 export interface Project extends CreateInfo, UpdateInfo {
   name: string;
   listIds: string[];
-  memberIds: string[];
+  members: UserIdWithName[];
 }
 
 /**
