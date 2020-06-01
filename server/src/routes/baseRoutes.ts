@@ -1,15 +1,23 @@
 import * as Sentry from "@sentry/node";
 import { Request, Response, Router } from "express";
-import { User } from "../../../types";
+import { Message, User } from "../../../types";
 import { verifyAuth } from "../middleware/authMiddleware";
 import { UserDocRef } from "../utils/firebaseContants";
 
 export const router = Router();
 
+/**
+ * Types
+ */
+type FetchUserRes = Response<Message | User>;
+
+/**
+ * Fetch User Handler
+ */
 router.get(
   "/",
   verifyAuth,
-  async (req: Request<{}, null, null>, res: Response): Promise<Response<User>> => {
+  async (req: Request<{}, null, null>, res: FetchUserRes): Promise<FetchUserRes> => {
     try {
       const { id } = req.user!;
 

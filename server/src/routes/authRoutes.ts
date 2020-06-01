@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/node";
 import { NextFunction, Request, Response, Router } from "express";
 import passport from "passport";
 import * as Yup from "yup";
-import { User } from "../../../types";
+import { Message, User } from "../../../types";
 import getSchema from "../config/yup";
 import { createUser } from "../middleware/authMiddleware";
 import { UserDBRef } from "../utils/firebaseContants";
@@ -13,10 +13,10 @@ export const router = Router();
  * Types
  */
 type SignUpReq = Request<{}, null, Pick<User, "name" | "email" | "password">>;
-type SignUpRes = Response<{ email?: string; message?: string }>;
+type SignUpRes = Response<{ email: string } | Message>;
 
 /**
- * Handler
+ * SignUp Handler
  */
 router.post(
   "/signUp",
@@ -56,7 +56,7 @@ interface SignInRes {
 }
 
 /**
- * Handler
+ * SignIn Handler
  */
 router.post(
   "/signIn",
@@ -76,13 +76,18 @@ router.post(
 );
 
 /**
- * Handler
+ * Types
+ */
+type SignOutRes = Response<Message>;
+
+/**
+ * SignOut Handler
  */
 router.get(
   "/signOut",
-  (req: Request, res: Response<string>): Response<string> => {
+  (req: Request, res: SignOutRes): SignOutRes => {
     req.logOut();
-    return res.status(200).send("Logged Out!");
+    return res.status(200).send({ message: "Logged Out!" });
   }
 );
 
