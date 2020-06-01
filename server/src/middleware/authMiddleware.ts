@@ -11,7 +11,7 @@ export const verifyAuth = (req: Request, res: Response, next: NextFunction): voi
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.status(401).send("Not Authorized!");
+    res.status(401).send({ message: "Not Authorized!" });
   }
 };
 

@@ -50,22 +50,26 @@ router.post(
  * Types
  */
 type SignInReq = Request<{}, null, Pick<User, "email" | "password">>;
+interface SignInRes {
+  email: string;
+  password: string;
+}
 
 /**
  * Handler
  */
 router.post(
   "/signIn",
-  async (req: SignInReq, res: Response<string>, next: NextFunction): Promise<Response<string>> => {
+  async (req: SignInReq, res: Response<SignInRes | User>, next: NextFunction): Promise<Response<SignInRes | User>> => {
     console.log("SignIn: ", req.body);
 
     return passport.authenticate("local", (error, user) => {
-      if (error || !user) return res.status(400).send("Wrong email or password!");
+      if (error || !user) return res.status(400).send({ email: " ", password: "Wrong email or password!" });
 
       // CREATE SESSION
       return req.login(user, err => {
         if (err) return res.status(400).send(err);
-        return res.status(200).send("Login Successful!");
+        return res.status(200).send(user);
       });
     })(req, res, next);
   }

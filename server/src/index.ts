@@ -2,12 +2,14 @@ import * as Sentry from "@sentry/node";
 import session from "cookie-session";
 import express from "express";
 import passport from "passport";
+import cors from "cors";
 import "./config/firebase";
 import keys from "./config/keys";
 import { authRoutes, baseRoutes, projectRoutes } from "./routes";
 import "./utils/passport.utils";
 
 const app = express();
+app.use(cors());
 app.enable("trust proxy");
 
 // ERROR HANDLER
@@ -44,7 +46,6 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-/* eslint-disable-next-line no-console */
 app.listen(keys.port, () => console.log(`Server is listening on port: ${keys.port}`));
 
 /**

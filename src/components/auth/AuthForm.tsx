@@ -1,6 +1,6 @@
+import React from "react";
 import styled from "@emotion/styled";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import React from "react";
 import * as Yup from "yup";
 import colors from "../../theme/colors";
 import { Button, Input } from "../widgets";
@@ -10,7 +10,7 @@ import { Button, Input } from "../widgets";
  */
 interface AuthFormProps {
   isSignUp?: boolean;
-  onSubmit: (values: InitialAuthValues, formikHelpers: FormikHelpers<InitialAuthValues>) => void;
+  onSubmit: (values: InitialAuthValues) => Promise<void>;
 }
 
 export type InitialAuthValues = typeof initialValues;
@@ -21,11 +21,22 @@ export type InitialAuthValues = typeof initialValues;
 const AuthForm: React.FC<AuthFormProps> = props => {
   const { isSignUp, onSubmit } = props;
 
+  const submitData = async (
+    values: InitialAuthValues,
+    formikHelpers: FormikHelpers<InitialAuthValues>
+  ): Promise<void> => {
+    try {
+      await onSubmit(values);
+    } catch (err) {
+      formikHelpers.setErrors(err);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={isSignUp ? SignUpSchema : SignInSchema}
-      onSubmit={onSubmit}
+      onSubmit={submitData}
       validateOnChange={false}
     >
       <FormContainer isSignUp={isSignUp} className={isSignUp ? "sign-up-container" : "sign-in-container"}>
