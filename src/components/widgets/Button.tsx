@@ -1,5 +1,6 @@
 import CSS from "csstype";
 import React from "react";
+import Spinner from "react-bootstrap/Spinner";
 import AppButton, { ButtonProps as AppButtonProps } from "react-bootstrap/Button";
 
 /**
@@ -14,13 +15,14 @@ export interface ButtonProps extends AppButtonProps {
   title: string;
   width?: number | string;
   style?: CSS.Properties;
+  isLoading?: boolean;
 }
 
 /**
  * Component
  */
 export const Button: React.FC<ButtonProps> = props => {
-  const { title, onClick, className, bgColor, color, width, height, style, ...restProps } = props;
+  const { title, onClick, className, bgColor, color, width, height, style, isLoading, ...restProps } = props;
 
   return (
     <AppButton
@@ -39,6 +41,7 @@ export const Button: React.FC<ButtonProps> = props => {
       {...restProps}
     >
       {title}
+      {isLoading ? <Spinner className="ml-1" animation="border" size="sm" /> : null}
     </AppButton>
   );
 };

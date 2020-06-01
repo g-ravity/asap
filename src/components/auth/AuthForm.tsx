@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
@@ -20,14 +20,20 @@ export type InitialAuthValues = typeof initialValues;
  */
 const AuthForm: React.FC<AuthFormProps> = props => {
   const { isSignUp, onSubmit } = props;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submitData = async (
     values: InitialAuthValues,
     formikHelpers: FormikHelpers<InitialAuthValues>
   ): Promise<void> => {
     try {
+      setIsSubmitting(true);
+
       await onSubmit(values);
+
+      setIsSubmitting(false);
     } catch (err) {
+      setIsSubmitting(false);
       formikHelpers.setErrors(err);
     }
   };
@@ -53,7 +59,13 @@ const AuthForm: React.FC<AuthFormProps> = props => {
         {isSignUp ? <Field name="name" placeholder="Name" component={Input} /> : null}
         <Field name="email" placeholder="Email" component={Input} />
         <Field name="password" type="password" placeholder="Password" component={Input} />
-        <Button className="my-3" title={isSignUp ? "Sign Up" : "Sign In"} type="submit" bgColor={colors.primary} />
+        <Button
+          className="my-3"
+          type="submit"
+          bgColor={colors.primary}
+          isLoading={isSubmitting}
+          title={isSignUp ? "Sign Up" : "Sign In"}
+        />
       </FormContainer>
     </Formik>
   );
